@@ -7,6 +7,18 @@
 <link rel="stylesheet" href="<?= base_url('css/datatable_style.css') ?>">
 <link rel="stylesheet" href="<?= base_url('plugins/datatable/css/fixedHeader.bootstrap5.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('plugins/datatable/css/responsive.bootstrap5.min.css') ?>">
+<style>
+    .close-btn {
+        background-color: #00ffff00;
+        color: #fff;
+        border: 0;
+        font-size: 14px;
+    }
+
+    thead {
+        background-color: #ceddf3;
+    }
+</style>
 <?= $this->endSection() ?>
 
 <?= $this->section('js_plugins') ?>
@@ -32,7 +44,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h4 class="modal-title text-white" id="modalDataLabel">Modal title</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 ...

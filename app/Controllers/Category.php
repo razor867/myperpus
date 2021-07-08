@@ -21,7 +21,7 @@ class Category extends BaseController
     public function index()
     {
         $data['title'] = 'Kategori';
-        $data['title_page'] = 'Daftar Kategori Buku';
+        $data['title_page'] = 'Kategori';
         $data['menu'] = 'kategori';
 
         return view('kategori/kategori', $data);

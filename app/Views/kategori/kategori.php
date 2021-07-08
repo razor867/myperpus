@@ -7,6 +7,11 @@
 <link rel="stylesheet" href="<?= base_url('css/datatable_style.css') ?>">
 <link rel="stylesheet" href="<?= base_url('plugins/datatable/css/fixedHeader.bootstrap5.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('plugins/datatable/css/responsive.bootstrap5.min.css') ?>">
+<style>
+    thead {
+        background-color: #ceddf3;
+    }
+</style>
 <?= $this->endSection() ?>
 
 <?= $this->section('js_plugins') ?>

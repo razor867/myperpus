@@ -18,7 +18,7 @@ class Home extends BaseController
 	public function profile()
 	{
 		$data['title'] = 'Profile';
-		$data['title_page'] = 'Your Profile';
+		$data['title_page'] = 'Profile';
 		$data['menu'] = 'profile';
 		return view('home/profile', $data);
 	}

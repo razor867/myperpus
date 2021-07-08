@@ -24,7 +24,7 @@ class Buku extends BaseController
     public function index()
     {
         $data['title'] = 'Buku';
-        $data['title_page'] = 'Daftar Buku';
+        $data['title_page'] = 'Buku';
         $data['menu'] = 'buku';
 
         return view('buku/buku', $data);
