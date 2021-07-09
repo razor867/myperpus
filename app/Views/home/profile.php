@@ -2,18 +2,23 @@
 
 <?= $this->section('css_custom') ?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+<link rel="stylesheet" href="<?= base_url('plugins/sweetalert/sweetalert2.min.css') ?>">
 <?= $this->endSection() ?>
 
 <?= $this->section('js_plugins') ?>
+<script src="<?= base_url('plugins/jquery-3.6.0.min.js') ?>"></script>
+<script src="<?= base_url('plugins/sweetalert/sweetalert2.min.js') ?>"></script>
 <?= $this->endSection() ?>
 
 <?= $this->section('js_custom') ?>
+<script src="<?= base_url('js/extensions/sweetalert.js') ?>"></script>
 <?= $this->endSection() ?>
 
 <?= $this->section('modal_custom') ?>
 <?= $this->endSection() ?>
 
 <?= $this->section('main_content') ?>
+<div class="info" info_data="<?= session()->getFlashdata('info') ?>"></div>
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
@@ -45,17 +50,42 @@
                         <?php if (in_groups('super admin')) : ?>
                             <img src="<?= base_url('img/superadmin.png') ?>" class="img-fluid rounded me-1" alt="<?= user()->username ?>" />
                         <?php elseif (in_groups('admin')) : ?>
-                            <img src="<?= (user()->jk == 0) ? base_url('img/admin.png') : base_url('img/admincewe.png') ?>" class="img-fluid rounded me-1" alt="<?= user()->username ?>" />
+                            <img src="<?= (user()->jk == 1) ? base_url('img/admin.png') : base_url('img/admincewe.png') ?>" class="img-fluid rounded me-1" alt="<?= user()->username ?>" />
                         <?php else : ?>
-                            <img src="<?= (user()->jk == 0) ? base_url('img/usercowo.png') : base_url('img/usercewe.png') ?>" class="img-fluid rounded me-1" alt="<?= user()->username ?>" />
+                            <img src="<?= (user()->jk == 1) ? base_url('img/usercowo.png') : base_url('img/usercewe.png') ?>" class="img-fluid rounded me-1" alt="<?= user()->username ?>" />
                         <?php endif ?>
+
+                        <center class="mt-3 mb-3">
+                            <h4><span class="badge <?= (in_groups('super admin')) ? 'bg-primary' : ((in_groups('admin')) ? 'bg-secondary' : 'bg-success') ?>"><?= (in_groups('super admin')) ? 'Super Admin' : ((in_groups('admin')) ? 'Admin' : 'Anggota Perpus') ?></span></h4>
+                        </center>
 
                     </div>
                     <div class="col-md-10 mt-3">
-                        <h2><?= user()->username ?></h2>
+                        <div class="mb-3 row">
+                            <div class="col-md-3"><span style="font-weight: 600;">Nama lengkap <div class="float-end">:</div></span></div>
+                            <div class="col-md-9"><?= user()->firstname . ' ' . user()->lastname ?></div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-3"><span style="font-weight: 600;">Jenis kelamin <div class="float-end">:</div></span></div>
+                            <div class="col-md-9"><?= (user()->jk == 1) ? 'Laki-laki' : 'Perempuan' ?></div>
+                        </div>
+                        <?php if (in_groups('anggota')) : ?>
+                            <div class="mb-3 row">
+                                <div class="col-md-3"><span style="font-weight: 600;">NIS (Nomor Induk Siswa) <div class="float-end">:</div></span></div>
+                                <div class="col-md-9"><?= user()->nis ?></div>
+                            </div>
+                        <?php endif ?>
+                        <div class="mb-3 row">
+                            <div class="col-md-3"><span style="font-weight: 600;">Nomor telepon <div class="float-end">:</div></span></div>
+                            <div class="col-md-9"><?= user()->tlp ?></div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-3"><span style="font-weight: 600;">Tentang anda <div class="float-end">:</div></span></div>
+                            <div class="col-md-9"><?= user()->about ?></div>
+                        </div>
                     </div>
                 </div>
-                <a href="#" class="btn btn-primary float-end"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                <a href="<?= base_url('home/form_edit_profile') ?>" class="btn btn-primary float-end mt-3"><i class="fas fa-user-edit"></i> Edit Profil</a>
             </div>
         </div>
     </div>

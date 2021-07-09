@@ -35,23 +35,25 @@
                         Pages
                     </li>
 
-                    <li class="sidebar-item <?= ($menu == 'dashboard') ? 'active' : '' ?>">
-                        <a class="sidebar-link" href="<?= base_url() ?>">
-                            <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
-                        </a>
-                    </li>
+                    <?php if (user()->update_bio == 1) : ?>
+                        <li class="sidebar-item <?= ($menu == 'dashboard') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url() ?>">
+                                <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+                            </a>
+                        </li>
 
-                    <li class="sidebar-item <?= ($menu == 'buku') ? 'active' : '' ?>">
-                        <a class="sidebar-link" href="<?= base_url('buku') ?>">
-                            <i class="align-middle" data-feather="book"></i> <span class="align-middle">Buku</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item <?= ($menu == 'buku') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url('buku') ?>">
+                                <i class="align-middle" data-feather="book"></i> <span class="align-middle">Buku</span>
+                            </a>
+                        </li>
 
-                    <li class="sidebar-item <?= ($menu == 'kategori') ? 'active' : '' ?>">
-                        <a class="sidebar-link" href="<?= base_url('category') ?>">
-                            <i class="align-middle" data-feather="tag"></i> <span class="align-middle">Kategori</span>
-                        </a>
-                    </li>
+                        <li class="sidebar-item <?= ($menu == 'kategori') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url('category') ?>">
+                                <i class="align-middle" data-feather="tag"></i> <span class="align-middle">Kategori</span>
+                            </a>
+                        </li>
+                    <?php endif ?>
 
                     <li class="sidebar-item <?= ($menu == 'profile') ? 'active' : '' ?>">
                         <a class="sidebar-link" href="<?= base_url('home/profile') ?>">
@@ -79,20 +81,23 @@
                                 <?php if (in_groups('super admin')) : ?>
                                     <img src="<?= base_url('img/superadmin.png') ?>" class="avatar img-fluid rounded me-1" alt="<?= user()->username ?>" />
                                 <?php elseif (in_groups('admin')) : ?>
-                                    <img src="<?= (user()->jk == 0) ? base_url('img/admin.png') : base_url('img/admincewe.png') ?>" class="avatar img-fluid rounded me-1" alt="<?= user()->username ?>" />
+                                    <img src="<?= (user()->jk == 1) ? base_url('img/admin.png') : base_url('img/admincewe.png') ?>" class="avatar img-fluid rounded me-1" alt="<?= user()->username ?>" />
                                 <?php else : ?>
-                                    <img src="<?= (user()->jk == 0) ? base_url('img/usercowo.png') : base_url('img/usercewe.png') ?>" class="avatar img-fluid rounded me-1" alt="<?= user()->username ?>" />
+                                    <img src="<?= (user()->jk == 1) ? base_url('img/usercowo.png') : base_url('img/usercewe.png') ?>" class="avatar img-fluid rounded me-1" alt="<?= user()->username ?>" />
                                 <?php endif ?>
 
                                 <span class="text-dark"><?= user()->username ?></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="<?= base_url('home/profile') ?>"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-                                <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
+                                <?php if (user()->update_bio == 1) : ?>
+                                    <a class="dropdown-item" href="<?= base_url('home/profile') ?>"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                                    <div class="dropdown-divider"></div>
+                                <?php endif ?>
+
+                                <!-- <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="pages-settings.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-                                <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
-                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a> -->
                                 <a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="align-middle me-1" data-feather="log-out"></i> Log out</a>
                             </div>
                         </li>

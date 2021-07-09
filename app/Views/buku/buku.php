@@ -51,7 +51,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Pinjam</button>
+                <?php if (in_groups('super admin') == false && in_groups('admin') == false) : ?>
+                    <a href="#" class="btn btn-primary">Pinjam</a>
+                <?php endif ?>
             </div>
         </div>
     </div>

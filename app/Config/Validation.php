@@ -89,4 +89,64 @@ class Validation
 			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
 		],
 	];
+
+	public $edit_profile = [
+		'id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'username' => [
+			'rules'  => 'required|alpha_numeric_space|min_length[3]|max_length[30]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'email' => [
+			'rules'  => 'required|valid_email',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'password' => [
+			'rules'  => 'permit_empty|strong_password|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'firstname' => [
+			'rules'  => 'required|alpha_numeric_space',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'lastname' => [
+			'rules'  => 'required|alpha_numeric_space',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'nis' => [
+			'rules'  => 'permit_empty|integer',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'tlp' => [
+			'rules'  => 'required|integer',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'jk' => [
+			'rules'  => 'required|integer',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'about' => [
+			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+	];
 }

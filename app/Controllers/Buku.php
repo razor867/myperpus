@@ -69,13 +69,17 @@ class Buku extends BaseController
         $data = array();
         // $no = $this->request->getPost('start');
         foreach ($list as $lt) {
-            $button_action = '
-    						  <a href="' . base_url('buku/form/' . encode($lt->id)) . '" class="btn btn-warning btn-sm" title="Edit">
-                                <i class="fas fa-edit"></i>
-                              </a>
-                              <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datbk\',\'' . encode($lt->id) . '\')" title="Delete">
-                                <i class="fas fa-trash-alt"></i>
-                              </a>';
+            if (in_groups('anggota')) {
+                $button_action = '<span class="badge bg-success">Tersedia</span>';
+            } else {
+                $button_action = '
+                                <a href="' . base_url('buku/form/' . encode($lt->id)) . '" class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datbk\',\'' . encode($lt->id) . '\')" title="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>';
+            }
 
             $judul = '<a href="javscript:void(0)" onclick="detail(\'' . encode($lt->id) . '\')" data-bs-toggle="modal" data-bs-target="#modalData">' . $lt->judul . '</a>';
 

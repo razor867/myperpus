@@ -6,11 +6,13 @@
 <link rel="stylesheet" href="<?= base_url('plugins/select2/select2.min.css') ?>">
 <link rel="stylesheet" href="<?= base_url('plugins/select2/select2-bootstrap-5-theme.min.css') ?>">
 <style>
-    span#select2-category_id-container {
+    span#select2-category_id-container,
+    span#select2-jk-container {
         font-size: 14px;
     }
 
-    ul#select2-category_id-results li {
+    ul#select2-category_id-results li,
+    ul#select2-jk-results li {
         font-size: 14px;
     }
 </style>
@@ -45,7 +47,7 @@
                 <div class="info" info_data="<?= session()->getFlashdata('info') ?>"></div>
                 <div class="row">
                     <div class="col-md-4">
-                        <h5>Form <?= $title_page ?></h5>
+                        <h5 class="card-title">Form <?= $title_page ?></h5>
                     </div>
                     <div class="col-md-8">
                         <a href="<?= $back ?>" class="btn btn-secondary float-end"><i class="fas fa-arrow-left"></i> Back</a>
