@@ -84,3 +84,51 @@ $(document).ready(function () {
     },
   });
 });
+
+function detail(id_data) {
+  $.ajax({
+    url: "/buku/detail",
+    method: "post",
+    dataType: "json",
+    data: {
+      id: id_data,
+    },
+    success: function (data) {
+      let msg = "";
+      if (data != "error") {
+        msg +=
+          "<h5>Penulis</h5>" +
+          "<p>" +
+          data.penulis +
+          "</p>" +
+          "<h5>Penerbit</h5>" +
+          "<p>" +
+          data.penerbit +
+          "</p>" +
+          "<h5>Detail</h5>" +
+          "<p>" +
+          data.deskripsi +
+          "</p>" +
+          "<h5>Stok Buku</h5>" +
+          "<p>" +
+          data.stok +
+          "</p>";
+        $(".modal-title").text(data.judul);
+        $(".modal-body").empty();
+        $(".modal-body").append(msg);
+        if (data.stok < 1) {
+          $(".modal-footer").find("btn-primary").remove();
+        } else {
+          $(".modal-footer")
+            .find(".btn-primary")
+            .attr("href", "/buku/pinjam/" + data.id);
+        }
+        // console.log(data);
+      } else {
+        msg = "Data tidak ditemukan";
+        $(".modal-title").text(msg);
+        $(".modal-body").text(msg);
+      }
+    },
+  });
+}

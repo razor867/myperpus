@@ -71,7 +71,9 @@
                         <h5 class="card-title mb-0">Daftar buku saat ini</h5>
                     </div>
                     <div class="col-md-8 mt-3">
-                        <a href="<?= base_url('buku/form') ?>" class="btn btn-primary float-end"><i class="fas fa-plus"></i> Add</a>
+                        <?php if (!in_groups('anggota')) : ?>
+                            <a href="<?= base_url('buku/form') ?>" class="btn btn-primary float-end"><i class="fas fa-plus"></i> Add</a>
+                        <?php endif ?>
                     </div>
                 </div>
             </div>
@@ -83,7 +85,7 @@
                                 <th class="wrap-max-50">Judul</th>
                                 <th class="wrap-max-25">Penulis</th>
                                 <th class="wrap-max-15">Kategori</th>
-                                <th class="wrap-max-10 dt-nowrap">Action</th>
+                                <th class="wrap-max-10 dt-nowrap"><?= in_groups('anggota') ? 'Stok' : 'Action' ?></th>
                             </tr>
                         </thead>
                         <tbody>

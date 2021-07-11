@@ -61,7 +61,7 @@ class Buku extends BaseController
 
     public function listdata()
     {
-        $column_order = array('judul', 'penulis', 'kategori', 'id');
+        $column_order = array('judul', 'penulis', 'kategori', 'stok', 'id');
         $column_search = array('judul', 'penulis', 'kategori');
         $order = array('judul' => 'asc');
         // $where = array('deleted_by' => NULL);
@@ -70,7 +70,11 @@ class Buku extends BaseController
         // $no = $this->request->getPost('start');
         foreach ($list as $lt) {
             if (in_groups('anggota')) {
-                $button_action = '<span class="badge bg-success">Tersedia</span>';
+                if ($lt->stok < 1) {
+                    $button_action = '<span class="badge bg-secondary">Kosong</span>';
+                } else {
+                    $button_action = '<span class="badge bg-success">Tersedia</span>';
+                }
             } else {
                 $button_action = '
                                 <a href="' . base_url('buku/form/' . encode($lt->id)) . '" class="btn btn-warning btn-sm" title="Edit">
@@ -141,6 +145,10 @@ class Buku extends BaseController
 
         $id = decode($this->request->getPost('id'));
         $data = $this->m_buku->find($id);
+        $data->id = encode($data->id);
+        $data->created_by = encode($data->created_by);
+        $data->updated_by = encode($data->updated_by);
+        $data->category_id = encode($data->category_id);
 
         echo json_encode($data);
     }

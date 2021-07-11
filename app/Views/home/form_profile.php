@@ -90,7 +90,7 @@
     <div class="mb-3 row">
         <label for="about" class="col-sm-4 col-form-label">Tentang anda</label>
         <div class="col-sm-8">
-            <textarea name="about" id="about" class="form-control <?= ($validation->hasError('about') ? 'is-invalid' : '') ?>" autofocus cols="30" rows="5"><?= $about ?></textarea>
+            <textarea name="about" id="about" class="form-control <?= ($validation->hasError('about') ? 'is-invalid' : '') ?>" maxlength="100" autofocus cols="30" rows="5"><?= $about ?></textarea>
             <div class="invalid-feedback">
                 <?= $validation->getError('about') ?>
             </div>
