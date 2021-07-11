@@ -50,6 +50,15 @@
         </div>
     </div>
     <div class="mb-3 row">
+        <label for="jml_buku" class="col-sm-4 col-form-label">Jumlah Buku</label>
+        <div class="col-sm-8">
+            <input type="number" class="form-control <?= ($validation->hasError('jml_buku') ? 'is-invalid' : '') ?>" min="0" id="jml_buku" name="jml_buku" autofocus value="<?= ($is_edit) ? $jml_buku : old('jml_buku') ?>">
+            <div class="invalid-feedback">
+                <?= $validation->getError('jml_buku') ?>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3 row">
         <label for="deskripsi" class="col-sm-4 col-form-label">Deskripsi</label>
         <div class="col-sm-8">
             <textarea name="deskripsi" id="deskripsi" class="form-control <?= ($validation->hasError('deskripsi') ? 'is-invalid' : '') ?>" autofocus cols="30" rows="5"><?= ($is_edit) ? $deskripsi : old('deskripsi') ?></textarea>

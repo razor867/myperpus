@@ -85,6 +85,12 @@ class Validation
 		'category_id' => [
 			'rules' => 'required|alpha_numeric',
 		],
+		'jml_buku' => [
+			'rules'  => 'required|numeric',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
 		'deskripsi' => [
 			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
 		],

@@ -18,6 +18,8 @@ class M_Buku extends Model
         'penulis',
         'penerbit',
         'category_id',
+        'jml_buku',
+        'stok',
         'deskripsi',
         'created_by',
         'updated_by',

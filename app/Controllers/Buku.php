@@ -23,11 +23,15 @@ class Buku extends BaseController
 
     public function index()
     {
-        $data['title'] = 'Buku';
-        $data['title_page'] = 'Buku';
-        $data['menu'] = 'buku';
+        if (user()->update_bio == 0) {
+            return redirect()->to(base_url('home/form_edit_profile'));
+        } else {
+            $data['title'] = 'Buku';
+            $data['title_page'] = 'Buku';
+            $data['menu'] = 'buku';
 
-        return view('buku/buku', $data);
+            return view('buku/buku', $data);
+        }
     }
 
     public function form($id = '')
@@ -46,6 +50,7 @@ class Buku extends BaseController
             $data['penulis'] = $getData->penulis;
             $data['penerbit'] = $getData->penerbit;
             $data['category_id'] = encode($getData->category_id);
+            $data['jml_buku'] = $getData->jml_buku;
             $data['category_name'] = $this->m_category->find(decode($id));
             $data['deskripsi'] = $getData->deskripsi;
             $data['action_url'] = base_url('buku/save/' . $id);
@@ -73,7 +78,7 @@ class Buku extends BaseController
                 if ($lt->stok < 1) {
                     $button_action = '<span class="badge bg-secondary">Kosong</span>';
                 } else {
-                    $button_action = '<span class="badge bg-success">Tersedia</span>';
+                    $button_action = '<span class="badge bg-success">Tersedia ' . $lt->stok . '</span>';
                 }
             } else {
                 $button_action = '
@@ -117,9 +122,23 @@ class Buku extends BaseController
         $id = decode($postData['id']);
         if ($id == 0) {
             $postData['created_by'] = user_id();
+            $postData['stok'] = $postData['jml_buku'];
             $this->m_buku->insert($postData);
             session()->setFlashdata('info', 'success_add');
         } else {
+            $data = $this->m_buku->find($id);
+            $jml_awal = $data->jml_buku;
+            $jml_update = $postData['jml_buku'];
+            if ($jml_awal < $jml_update) {
+                //penambahan jml buku
+                $selisih = $jml_update - $jml_awal;
+                $postData['stok'] = $data->stok + $selisih;
+            } else {
+                //pengurangan jml buku
+                $selisih = $jml_awal - $jml_update;
+                $postData['stok'] = $data->stok - $selisih;
+            }
+
             $postData['updated_by'] = user_id();
             $this->m_buku->update($id, $postData);
             session()->setFlashdata('info', 'success_edit');
@@ -151,5 +170,10 @@ class Buku extends BaseController
         $data->category_id = encode($data->category_id);
 
         echo json_encode($data);
+    }
+
+    public function pinjam($id)
+    {
+        $id = decode($id);
     }
 }

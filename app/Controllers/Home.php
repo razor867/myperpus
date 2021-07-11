@@ -38,10 +38,14 @@ class Home extends BaseController
 
 	public function profile()
 	{
-		$data['title'] = 'Profile';
-		$data['title_page'] = 'Profile';
-		$data['menu'] = 'profile';
-		return view('home/profile', $data);
+		if (user()->update_bio == 0) {
+			return redirect()->to(base_url('home/form_edit_profile'));
+		} else {
+			$data['title'] = 'Profile';
+			$data['title_page'] = 'Profile';
+			$data['menu'] = 'profile';
+			return view('home/profile', $data);
+		}
 	}
 
 	public function form_edit_profile()

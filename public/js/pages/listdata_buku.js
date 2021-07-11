@@ -97,31 +97,26 @@ function detail(id_data) {
       let msg = "";
       if (data != "error") {
         msg +=
-          "<h5>Penulis</h5>" +
-          "<p>" +
-          data.penulis +
-          "</p>" +
-          "<h5>Penerbit</h5>" +
-          "<p>" +
-          data.penerbit +
-          "</p>" +
-          "<h5>Detail</h5>" +
-          "<p>" +
-          data.deskripsi +
-          "</p>" +
-          "<h5>Stok Buku</h5>" +
-          "<p>" +
-          data.stok +
-          "</p>";
+          detail_content("Penulis", data.penulis) +
+          detail_content("Penerbit", data.penerbit) +
+          detail_content("Jumlah Buku", data.jml_buku) +
+          detail_content("Stok Tersedia", data.stok) +
+          detail_content("Detail", data.deskripsi);
+
         $(".modal-title").text(data.judul);
         $(".modal-body").empty();
         $(".modal-body").append(msg);
         if (data.stok < 1) {
-          $(".modal-footer").find("btn-primary").remove();
+          $(".modal-footer").find(".pinjam").empty();
         } else {
+          $(".modal-footer").find(".pinjam").empty();
           $(".modal-footer")
-            .find(".btn-primary")
-            .attr("href", "/buku/pinjam/" + data.id);
+            .find(".pinjam")
+            .append(
+              '<a href="/buku/pinjam/' +
+                data.id +
+                '" class="btn btn-primary">Pinjam</a>'
+            );
         }
         // console.log(data);
       } else {
@@ -131,4 +126,18 @@ function detail(id_data) {
       }
     },
   });
+}
+
+function detail_content(label, data) {
+  let content =
+    '<div class="mb-3 row">' +
+    '<div class="col-md-4"><span style="font-weight: 600;">' +
+    label +
+    " " +
+    '<div class="float-end">:</div></span></div>' +
+    '<div class="col-md-8">' +
+    data +
+    "</div>" +
+    "</div>";
+  return content;
 }
