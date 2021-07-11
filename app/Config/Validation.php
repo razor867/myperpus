@@ -143,7 +143,7 @@ class Validation
 			]
 		],
 		'about' => [
-			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
+			'rules'  => 'permit_empty|max_length[100]|regex_match[/^[\w\s ,.]+$/]',
 			'errors' => [
 				'required' => 'Wajib diisi!',
 			]
