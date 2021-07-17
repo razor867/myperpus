@@ -113,12 +113,14 @@ function detail(id_data) {
                 '<a href="/approval/change_status/' +
                   data.id +
                   "/" +
-                  "approved" +
+                  "approved/" +
+                  data.id_buku +
                   '" class="btn btn-success" style="margin-right:8px;"><i class="fas fa-check-square"></i> Approve</a>' +
                   '<a href="/approval/change_status/' +
                   data.id +
                   "/" +
-                  "rejected" +
+                  "rejected/" +
+                  data.id_buku +
                   '" class="btn btn-danger"><i class="fas fa-ban"></i> Reject</a>'
               );
           }

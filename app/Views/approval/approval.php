@@ -95,12 +95,23 @@
                 </div>
             </div>
         <?php else : ?>
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill" />
+                </svg>
+                <div>
+                    Sistem secara otomatis akan melakukan <b>Reject</b> pada tiket pengajuan peminjaman buku
+                    yang berstatus pending, apabila tidak ada proses verikasi data dari peminjam setelah
+                    1 hari dari proses pengajuan peminjaman.
+                </div>
+            </div>
             <div class="alert alert-warning d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                     <use xlink:href="#exclamation-triangle-fill" />
                 </svg>
                 <div>
-                    Admin dapat melakukan perbaikan data pengajuan peminjaman buku, apabila status pengajuan peminjaman buku berstasus <b>pending</b>.
+                    Admin dapat melakukan perbaikan data pengajuan peminjaman buku, apabila status pengajuan
+                    peminjaman buku masih berstasus <b>pending</b>.
                 </div>
             </div>
         <?php endif ?>

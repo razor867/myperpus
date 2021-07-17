@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class M_Peminjaman extends Model
+class M_Pengembalian extends Model
 {
-    protected $table      = 'peminjaman';
+    protected $table      = 'pengembalian';
     protected $primaryKey = 'id';
 
     protected $returnType     = 'object';
@@ -17,6 +17,7 @@ class M_Peminjaman extends Model
         'id_approval',
         'id_buku',
         'id_anggota',
+        'tgl_dikembalikan',
         'created_by',
         'updated_by',
         'deleted_by',

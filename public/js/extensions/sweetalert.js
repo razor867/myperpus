@@ -46,6 +46,14 @@ $(document).ready(function () {
           // showConfirmButton: false,
           // timer: 10000,
         });
+      } else if (infoFlash == "error_pinjam2") {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Pinjam",
+          text: "Anda tidak dapat meminjam buku ini, karena anda sedang meminjam buku ini dan belum dikembalikan",
+          // showConfirmButton: false,
+          // timer: 10000,
+        });
       } else if (infoFlash == "success_change_status") {
 	Swal.fire({
           icon: "success",

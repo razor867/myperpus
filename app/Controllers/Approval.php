@@ -40,6 +40,17 @@ class Approval extends BaseController
             $data['title_page'] = 'Persetujuan';
             $data['menu'] = 'approval';
 
+            // cek apakah ada tiket pengajuan yang expirate?
+            if (in_groups('anggota') == false) {
+                $data_approval = $this->m_approval->select('id, tgl_expirate')->where(['status' => 'pending', 'deleted_at' => NULL])->findAll();
+                foreach ($data_approval as $da) {
+                    $now = Time::now('Asia/Jakarta', 'id_ID');
+                    if ($da->tgl_expirate < $now) {
+                        $this->m_approval->update($da->id, ['status' => 'rejected']);
+                    }
+                }
+            }
+
             return view('approval/approval', $data);
         }
     }
@@ -118,16 +129,21 @@ class Approval extends BaseController
             $postData['tgl_pinjam'] = new Time('now', 'Asia/Jakarta', 'id_ID');
             $postData['id_anggota'] = user_id();
             $postData['created_by'] = user_id();
+            $postData['tgl_expirate'] = Time::tomorrow('Asia/Jakarta', 'id_ID');
             $check_double_order = $this->m_approval->where(['id_buku' => $postData['id_buku'], 'id_anggota' => user_id(), 'status' => 'pending', 'deleted_at' => NULL])->find();
             //cek sudah diorder atau belum?
             if ($check_double_order) {
                 session()->setFlashdata('info', 'error_pinjam');
             } else {
-                // $check_borrow = $this->m_approval->where([])
+                $check_borrow = $this->m_peminjaman->where(['id_buku' => $postData['id_buku'], 'id_anggota' => user_id(), 'deleted_at' => NULL])->find();
                 //cek sedang dalam peminjaman?
-
-                $this->m_approval->insert($postData);
-                session()->setFlashdata('info', 'success_add');
+                if ($check_borrow) {
+                    session()->setFlashdata('info', 'error_pinjam2');
+                    return redirect()->to(base_url('peminjaman'));
+                } else {
+                    $this->m_approval->insert($postData);
+                    session()->setFlashdata('info', 'success_add');
+                }
             }
         } else {
             $postData['updated_by'] = user_id();
@@ -148,6 +164,7 @@ class Approval extends BaseController
         $data->edit_status = (in_groups('anggota')) ? false : true;
         $data->created_at = date('Y-m-d', strtotime($data->created_at));
         $data->judul_buku = $this->getJudulBuku($data->id_buku);
+        $data->id_buku = encode($data->id_buku);
         $data->peminjam = $this->getAnggotaName($data->id_anggota, true);
         $data->info_status = '<span class="badge ' . (($data->status == 'pending') ? 'bg-warning' : (($data->status == 'approved') ? 'bg-success' : 'bg-danger')) . '">' . $data->status . '</span>';
 
@@ -164,11 +181,15 @@ class Approval extends BaseController
         return redirect()->to(base_url('approval'));
     }
 
-    public function change_status($id, $status)
+    public function change_status($id, $status, $id_buku)
     {
         $postData['id_approval'] = decode($id);
         $postData['created_by'] = user_id();
+        $postData['id_buku'] = decode($id_buku);
+        $postData['id_anggota'] = user_id();
         if ($status == 'approved') {
+            $buku = $this->m_buku->select('stok')->find(decode($id_buku));
+            $this->m_buku->update(decode($id_buku), ['stok' => $buku->stok - 1]);
             $this->m_peminjaman->insert($postData);
         }
         $this->m_approval->update(decode($id), ['status' => $status]);
