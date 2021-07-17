@@ -2,23 +2,28 @@
 
 namespace App\Controllers;
 
+use Config\Services;
+use App\Models\M_Approval;
 use App\Models\M_Buku;
 use App\Models\M_Category;
 use App\Models\Serverside_model;
+use Irsyadulibad\DataTables\DataTables;
 
 class Buku extends BaseController
 {
     protected $m_buku;
     protected $validation;
-    protected $m_serverside;
+    // protected $m_serverside;
     protected $m_category;
+    protected $m_approval;
 
     public function __construct()
     {
         $this->m_buku = new M_Buku();
         $this->validation = \Config\Services::validation();
-        $this->m_serverside = new Serverside_model();
+        // $this->m_serverside = new Serverside_model();
         $this->m_category = new M_Category();
+        $this->m_approval = new M_Approval();
     }
 
     public function index()
@@ -66,48 +71,33 @@ class Buku extends BaseController
 
     public function listdata()
     {
-        $column_order = array('judul', 'penulis', 'kategori', 'stok', 'id');
-        $column_search = array('judul', 'penulis', 'kategori');
-        $order = array('judul' => 'asc');
-        // $where = array('deleted_by' => NULL);
-        $list = $this->m_serverside->get_datatables('_buku', $column_order, $column_search, $order);
-        $data = array();
-        // $no = $this->request->getPost('start');
-        foreach ($list as $lt) {
-            if (in_groups('anggota')) {
-                if ($lt->stok < 1) {
-                    $button_action = '<span class="badge bg-secondary">Kosong</span>';
+        return DataTables::use('buku')
+            ->where(['buku.deleted_at' => NULL])
+            ->select('judul, penulis, category.nama as kategori, buku.id as id_buku, stok')
+            ->join('category', 'buku.category_id = category.id', 'LEFT JOIN')
+            ->addColumn('action', function ($data) {
+                if (in_groups('anggota')) {
+                    if ($data->stok < 1) {
+                        $button_action = '<span class="badge bg-secondary">Kosong</span>';
+                    } else {
+                        $button_action = '<span class="badge bg-success">Tersedia ' . $data->stok . '</span>';
+                    }
                 } else {
-                    $button_action = '<span class="badge bg-success">Tersedia ' . $lt->stok . '</span>';
-                }
-            } else {
-                $button_action = '
-                                <a href="' . base_url('buku/form/' . encode($lt->id)) . '" class="btn btn-warning btn-sm" title="Edit">
+                    $button_action = '<a href="' . base_url('buku/form/' . encode($data->id_buku)) . '" class="btn btn-warning btn-sm" title="Edit">
                                     <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datbk\',\'' . encode($lt->id) . '\')" title="Delete">
+                                  </a>
+                                  <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datbk\',\'' . encode($data->id_buku) . '\')" title="Delete">
                                     <i class="fas fa-trash-alt"></i>
-                                </a>';
-            }
-
-            $judul = '<a href="javscript:void(0)" onclick="detail(\'' . encode($lt->id) . '\')" data-bs-toggle="modal" data-bs-target="#modalData">' . $lt->judul . '</a>';
-
-            $row = array();
-            $row[] = $judul;
-            $row[] = $lt->penulis;
-            $row[] = $lt->kategori;
-            $row[] = $button_action;
-
-            $data[] = $row;
-        }
-        $output = array(
-            'draw' => $this->request->getPost('draw'),
-            'recordsTotal' => $this->m_serverside->count_all('_buku'),
-            'recordsFiltered' => $this->m_serverside->count_filtered('_buku', $column_order, $column_search, $order),
-            'data' => $data,
-        );
-
-        return json_encode($output);
+                                  </a>';
+                }
+                return $button_action;
+            })
+            ->addColumn('judul', function ($data) {
+                $judul = '<a href="javscript:void(0)" onclick="detail(\'' . encode($data->id_buku) . '\')" data-bs-toggle="modal" data-bs-target="#modalData">' . $data->judul . '</a>';
+                return $judul;
+            })
+            ->rawColumns(['action', 'judul'])
+            ->make(true);
     }
 
     public function save($id = '')
@@ -136,7 +126,9 @@ class Buku extends BaseController
             } else {
                 //pengurangan jml buku
                 $selisih = $jml_awal - $jml_update;
-                $postData['stok'] = $data->stok - $selisih;
+                if ($data->stok > 0) {
+                    $postData['stok'] = $data->stok - $selisih;
+                }
             }
 
             $postData['updated_by'] = user_id();
@@ -172,8 +164,31 @@ class Buku extends BaseController
         echo json_encode($data);
     }
 
-    public function pinjam($id)
+    public function pinjam($id_buku, $page, $id = '')
     {
-        $id = decode($id);
+        $data['title'] = (empty($id) ? 'Tambah' : 'Edit') . ' Pengajuan Peminjaman Buku';
+        $data['title_page'] = (empty($id) ? 'Tambah' : 'Edit')  . ' Pengajuan Peminjaman Buku';
+        $data['validation'] = $this->validation;
+        $data['menu'] = 'buku';
+        $data['back'] = ($page == 'book') ? base_url('buku') : base_url('approval');
+        $data['is_edit'] = false;
+        $getJudul = $this->m_buku->select('judul')->find(decode($id_buku));
+        $data['judul_buku'] = $getJudul->judul;
+
+        if (!empty($id)) {
+            $getData = $this->m_approval->find(decode($id));
+            $data['total_pinjam'] = $getData->total_pinjam;
+            $data['tgl_pengembalian'] = $getData->tgl_pengembalian;
+            $data['action_url'] = base_url('approval/save/' . $id_buku . '/' . $id);
+            $data['is_edit'] = true;
+            $data['id_buku'] = $id_buku;
+            $data['id'] = $id;
+        } else {
+            $data['id'] = encode(0);
+            $data['id_buku'] = $id_buku;
+            $data['action_url'] = base_url('approval/save/' . $id_buku);
+        }
+
+        return view('buku/form_pinjam', $data);
     }
 }

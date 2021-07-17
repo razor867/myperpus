@@ -1,30 +1,8 @@
 $(document).ready(function () {
   const $thead = $("thead tr th").length;
+  const template = document.getElementById("template");
 
-  $("#tabledata").DataTable({
-    // dom: "lfrtip",
-    // buttons: [
-    //   {
-    //     extend: "copy",
-    //     className: "btn btn-secondary btn-sm",
-    //   },
-    //   {
-    //     extend: "csv",
-    //     className: "btn btn-secondary btn-sm",
-    //   },
-    //   {
-    //     extend: "excel",
-    //     className: "btn btn-secondary btn-sm",
-    //   },
-    //   {
-    //     extend: "pdf",
-    //     className: "btn btn-secondary btn-sm",
-    //   },
-    //   {
-    //     extend: "print",
-    //     className: "btn btn-secondary btn-sm",
-    //   },
-    // ],
+  var t = $("#tabledata").DataTable({
     processing: true,
     oLanguage: {
       sLengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -47,33 +25,33 @@ $(document).ready(function () {
     columnDefs: [
       {
         orderable: false,
-        targets: $thead == 3 ? [] : [3],
+        targets: $thead == 4 ? [2, 3] : [2, 3, 4],
       },
       {
-        className: "wrap-max-50",
-        targets: [0],
+        className: "wrap-max-10",
+        targets: [0, 3],
       },
       {
-        className: "wrap-max-25",
+        className: "wrap-max-40",
         targets: [1],
       },
       {
-        className: "wrap-max-15",
+        className: "wrap-max-30",
         targets: [2],
       },
       {
         className: "wrap-max-10 dt-nowrap",
-        targets: [3],
+        targets: [4],
       },
     ],
-    // ordering: true,
+    ordering: false,
     // info: true,
     serverSide: true,
     responsive: true,
     // stateSave: true,
     scrollX: true,
     ajax: {
-      url: "/buku/listdata",
+      url: "/approval/listdata",
       type: "get",
       error: function (e) {
         console.log("data tidak ditemukan di server");
@@ -82,10 +60,20 @@ $(document).ready(function () {
       //   console.log(data);
       // },
     },
+    fnInitComplete: function (oSettings, json) {
+      // tippy(".btn-info", {
+      //   trigger: "click",
+      //   content: template.innerHTML,
+      //   allowHTML: true,
+      //   content: "Testing",
+      //   appendTo: () => document.body,
+      // });
+    },
     columns: [
-      { data: "judul", name: "judul" },
-      { data: "penulis", name: "penulis" },
-      { data: "kategori", name: "kategori" },
+      { data: "no", name: "no" },
+      { data: "judul_buku", name: "judul_buku" },
+      { data: "peminjam", name: "peminjam" },
+      { data: "status", name: "status" },
       { data: "action", name: "action" },
     ],
   });
@@ -93,7 +81,7 @@ $(document).ready(function () {
 
 function detail(id_data) {
   $.ajax({
-    url: "/buku/detail",
+    url: "/approval/detail",
     method: "post",
     dataType: "json",
     data: {
@@ -103,27 +91,31 @@ function detail(id_data) {
       let msg = "";
       if (data != "error") {
         msg +=
-          detail_content("Penulis", data.penulis) +
-          detail_content("Penerbit", data.penerbit) +
-          detail_content("Jumlah Buku", data.jml_buku) +
-          detail_content("Stok Tersedia", data.stok) +
-          detail_content("Detail", data.deskripsi);
+          detail_content("Total Pinjam", data.total_pinjam) +
+          detail_content("Tanggal Pinjam", data.tgl_pinjam) +
+          detail_content("Tanggal Pengembalian", data.tgl_pengembalian) +
+          detail_content("Tanggal Buat", data.created_at);
 
-        $(".modal-title").text(data.judul);
+        $(".modal-title").text("Detail");
         $(".modal-body").empty();
         $(".modal-body").append(msg);
-        if (data.stok < 1) {
-          $(".modal-footer").find(".pinjam").empty();
+        if (data.edit_status == false) {
+          $(".modal-footer").find(".change-status").empty();
         } else {
-          $(".modal-footer").find(".pinjam").empty();
+          $(".modal-footer").find(".change-status").empty();
           $(".modal-footer")
-            .find(".pinjam")
+            .find(".change-status")
             .append(
-              '<a href="/buku/pinjam/' +
+              '<a href="/approval/change_status/' +
                 data.id +
                 "/" +
-                "book" +
-                '" class="btn btn-primary">Pinjam</a>'
+                "approve" +
+                '" class="btn btn-success" style="margin-right:8px;">Approve</a>' +
+                '<a href="/approval/change_status/' +
+                data.id +
+                "/" +
+                "reject" +
+                '" class="btn btn-danger">Reject</a>'
             );
         }
         // console.log(data);
@@ -139,11 +131,11 @@ function detail(id_data) {
 function detail_content(label, data) {
   let content =
     '<div class="mb-3 row">' +
-    '<div class="col-md-4"><span style="font-weight: 600;">' +
+    '<div class="col"><span style="font-weight: 600;">' +
     label +
     " " +
     '<div class="float-end">:</div></span></div>' +
-    '<div class="col-md-8">' +
+    '<div class="col">' +
     data +
     "</div>" +
     "</div>";

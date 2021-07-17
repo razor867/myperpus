@@ -56,6 +56,24 @@
                             </li>
                         <?php endif ?>
 
+                        <li class="sidebar-item <?= ($menu == 'approval') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url('approval') ?>">
+                                <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Persetujuan</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item <?= ($menu == 'peminjaman') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url('peminjaman') ?>">
+                                <i class="align-middle" data-feather="arrow-up-right"></i> <span class="align-middle">Peminjaman</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item <?= ($menu == 'pengembalian') ? 'active' : '' ?>">
+                            <a class="sidebar-link" href="<?= base_url('pengembalian') ?>">
+                                <i class="align-middle" data-feather="arrow-down-left"></i> <span class="align-middle">Pengembalian</span>
+                            </a>
+                        </li>
+
                     <?php endif ?>
 
                     <li class="sidebar-item <?= ($menu == 'profile') ? 'active' : '' ?>">
@@ -134,8 +152,8 @@
 
     <?= $this->renderSection('modal_custom') ?>
 
-    <script src="<?= base_url('js/app.js') ?>"></script>
     <!-- <script src="<?= base_url('js/bootstrap.bundle.min.js') ?>"></script> -->
+    <script src="<?= base_url('js/app.js') ?>"></script>
 
     <?= $this->renderSection('js_plugins') ?>
 

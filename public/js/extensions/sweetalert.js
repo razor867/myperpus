@@ -38,6 +38,14 @@ $(document).ready(function () {
           showConfirmButton: false,
           timer: 2500,
         });
+      } else if (infoFlash == "error_pinjam") {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Pinjam",
+          text: "Anda tidak dapat meminjam buku ini, karena anda sudah mengajukan peminjaman sebelumnya dan belum disetujui oleh admin",
+          // showConfirmButton: false,
+          // timer: 10000,
+        });
       }
     }
   });

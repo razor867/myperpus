@@ -155,4 +155,25 @@ class Validation
 			]
 		],
 	];
+
+	public $pinjam = [
+		'id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'id_buku' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'total_pinjam' => [
+			'rules'  => 'required|numeric|regex_match[/^[1-9]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'tgl_pengembalian' => [
+			'rules'  => 'required|valid_date',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+	];
 }

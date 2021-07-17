@@ -70,7 +70,7 @@ $(document).ready(function () {
     scrollX: true,
     ajax: {
       url: "/category/listdata",
-      type: "post",
+      type: "get",
       error: function (e) {
         console.log("data tidak ditemukan di server");
       },
@@ -78,5 +78,10 @@ $(document).ready(function () {
       //   console.log(data);
       // },
     },
+    columns: [
+      { data: "nama", name: "nama" },
+      { data: "deskripsi", name: "deskripsi" },
+      { data: "action", name: "action" },
+    ],
   });
 });

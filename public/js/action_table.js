@@ -1,7 +1,7 @@
 function deleteData(page, id) {
   let link = "";
   if (page == "_datbk") {
-    link = "/home/delete/" + id;
+    link = "/buku/delete/" + id;
   } else if (page == "_datcat") {
     link = "/category/delete/" + id;
   }
