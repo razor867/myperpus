@@ -6,6 +6,7 @@ use App\Models\M_Approval;
 use App\Models\M_Buku;
 use App\Models\Serverside_model;
 use App\Models\M_Users;
+use App\Models\M_Peminjaman;
 use CodeIgniter\I18n\Time;
 use Irsyadulibad\DataTables\DataTables;
 
@@ -16,6 +17,7 @@ class Approval extends BaseController
     protected $m_serverside;
     protected $m_user;
     protected $m_buku;
+    protected $m_peminjaman;
     protected $no_rows;
 
     public function __construct()
@@ -25,6 +27,7 @@ class Approval extends BaseController
         $this->validation = \Config\Services::validation();
         $this->m_user = new M_Users();
         $this->m_buku = new M_Buku();
+        $this->m_peminjaman = new M_Peminjaman();
         $this->no_rows = 0;
     }
 
@@ -66,13 +69,20 @@ class Approval extends BaseController
                         </button>';
                     }
                 } else {
-                    $button_action = '
-                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id) . '\')">
-                                        <i class="fas fa-info-circle"></i> Detail
-                                    </button>
-                                    <a href="' . base_url('buku/pinjam/' . encode($data->id_buku) . '/approval' . '/' . encode($data->id)) . '" class="btn btn-secondary btn-sm" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>';
+                    if ($data->status != 'pending') {
+                        $button_action = '
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id) . '\')">
+                            <i class="fas fa-info-circle"></i> Detail
+                        </button>';
+                    } else {
+                        $button_action = '
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id) . '\')">
+                            <i class="fas fa-info-circle"></i> Detail
+                        </button>
+                        <a href="' . base_url('buku/pinjam/' . encode($data->id_buku) . '/approval' . '/' . encode($data->id)) . '" class="btn btn-secondary btn-sm" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>';
+                    }
                 }
                 return $button_action;
             })
@@ -128,21 +138,18 @@ class Approval extends BaseController
         return redirect()->to(base_url('approval'));
     }
 
-    private function getAnggotaName($id)
-    {
-        $data = $this->m_user->select(['firstname', 'lastname'])->find($id);
-        return $data->firstname . ' ' . $data->lastname;
-    }
-
     public function detail()
     {
         $this->request->isAJAX() or exit();
 
         $id = decode($this->request->getPost('id'));
-        $data = $this->m_approval->select(['id', 'total_pinjam', 'tgl_pinjam', 'tgl_pengembalian', 'created_at'])->find($id);
+        $data = $this->m_approval->select(['id', 'id_anggota', 'id_buku', 'total_pinjam', 'status', 'tgl_pinjam', 'tgl_pengembalian', 'created_at'])->find($id);
         $data->id = encode($data->id);
         $data->edit_status = (in_groups('anggota')) ? false : true;
         $data->created_at = date('Y-m-d', strtotime($data->created_at));
+        $data->judul_buku = $this->getJudulBuku($data->id_buku);
+        $data->peminjam = $this->getAnggotaName($data->id_anggota, true);
+        $data->info_status = '<span class="badge ' . (($data->status == 'pending') ? 'bg-warning' : (($data->status == 'approved') ? 'bg-success' : 'bg-danger')) . '">' . $data->status . '</span>';
 
         echo json_encode($data);
     }
@@ -157,6 +164,18 @@ class Approval extends BaseController
         return redirect()->to(base_url('approval'));
     }
 
+    public function change_status($id, $status)
+    {
+        $postData['id_approval'] = decode($id);
+        $postData['created_by'] = user_id();
+        if ($status == 'approved') {
+            $this->m_peminjaman->insert($postData);
+        }
+        $this->m_approval->update(decode($id), ['status' => $status]);
+        session()->setFlashdata('info', 'success_change_status');
+        return redirect()->to(base_url('peminjaman'));
+    }
+
     private function where_data()
     {
         if (in_groups('anggota')) {
@@ -165,5 +184,22 @@ class Approval extends BaseController
             $where = [];
         }
         return $where;
+    }
+
+    private function getAnggotaName($id, $nis = '')
+    {
+        if ($nis) {
+            $data = $this->m_user->select(['firstname', 'lastname', 'nis'])->find($id);
+            return $data->firstname . ' ' . $data->lastname . ' (' . $data->nis . ')';
+        } else {
+            $data = $this->m_user->select(['firstname', 'lastname'])->find($id);
+            return $data->firstname . ' ' . $data->lastname;
+        }
+    }
+
+    private function getJudulBuku($id)
+    {
+        $data = $this->m_buku->select('judul')->find($id);
+        return $data->judul;
     }
 }

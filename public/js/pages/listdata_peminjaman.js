@@ -23,25 +23,21 @@ $(document).ready(function () {
       searchPlaceholder: "Search...",
     },
     columnDefs: [
-      {
-        orderable: false,
-        targets: $thead == 4 ? [2, 3] : [2, 3, 4],
-      },
+      // {
+      //   orderable: false,
+      //   targets: $thead == 6 ? [2, 3] : [2, 3, 6],
+      // },
       {
         className: "wrap-max-10",
-        targets: [0, 3],
-      },
-      {
-        className: "wrap-max-40",
-        targets: [1],
+        targets: [0],
       },
       {
         className: "wrap-max-30",
-        targets: [2],
+        targets: [1, 2],
       },
       {
         className: "wrap-max-10 dt-nowrap",
-        targets: [4],
+        targets: [3, 4, 5],
       },
     ],
     ordering: false,
@@ -51,7 +47,7 @@ $(document).ready(function () {
     // stateSave: true,
     scrollX: true,
     ajax: {
-      url: "/approval/listdata",
+      url: "/peminjaman/listdata",
       type: "get",
       error: function (e) {
         console.log("data tidak ditemukan di server");
@@ -71,9 +67,10 @@ $(document).ready(function () {
     },
     columns: [
       { data: "no", name: "no" },
-      { data: "judul_buku", name: "judul_buku" },
       { data: "peminjam", name: "peminjam" },
-      { data: "status", name: "status" },
+      { data: "buku", name: "buku" },
+      { data: "tgl_pinjam", name: "tgl_pinjam" },
+      { data: "tgl_pengembalian", name: "tgl_pengembalian" },
       { data: "action", name: "action" },
     ],
   });
@@ -81,7 +78,7 @@ $(document).ready(function () {
 
 function detail(id_data) {
   $.ajax({
-    url: "/approval/detail",
+    url: "/peminjaman/detail",
     method: "post",
     dataType: "json",
     data: {
@@ -95,34 +92,11 @@ function detail(id_data) {
           detail_content("Peminjam", data.peminjam) +
           detail_content("Total Pinjam", data.total_pinjam) +
           detail_content("Tanggal Pinjam", data.tgl_pinjam) +
-          detail_content("Tanggal Pengembalian", data.tgl_pengembalian) +
-          detail_content("Tanggal Buat", data.created_at) +
-          detail_content("Status", data.info_status);
+          detail_content("Tanggal Pengembalian", data.tgl_pengembalian);
 
         $(".modal-title").text("Detail");
         $(".modal-body").empty();
         $(".modal-body").append(msg);
-        if (data.edit_status == false) {
-          $(".modal-footer").find(".change-status").empty();
-        } else {
-          $(".modal-footer").find(".change-status").empty();
-          if (data.status == "pending") {
-            $(".modal-footer")
-              .find(".change-status")
-              .append(
-                '<a href="/approval/change_status/' +
-                  data.id +
-                  "/" +
-                  "approved" +
-                  '" class="btn btn-success" style="margin-right:8px;"><i class="fas fa-check-square"></i> Approve</a>' +
-                  '<a href="/approval/change_status/' +
-                  data.id +
-                  "/" +
-                  "rejected" +
-                  '" class="btn btn-danger"><i class="fas fa-ban"></i> Reject</a>'
-              );
-          }
-        }
         // console.log(data);
       } else {
         msg = "Data tidak ditemukan";

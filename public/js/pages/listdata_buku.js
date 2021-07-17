@@ -123,7 +123,7 @@ function detail(id_data) {
                 data.id +
                 "/" +
                 "book" +
-                '" class="btn btn-primary">Pinjam</a>'
+                '" class="btn btn-primary"><i class="fas fa-expand-alt"></i> Pinjam</a>'
             );
         }
         // console.log(data);

@@ -52,7 +52,7 @@
                 ...
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Close</button>
                 <div class="change-status"></div>
             </div>
         </div>
@@ -74,25 +74,36 @@
 </svg>
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-primary d-flex align-items-center" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
-                <use xlink:href="#info-fill" />
-            </svg>
-            <div>
-                Pastikan setelah membuat pengajuan peminjaman buku, anda harus <b>datang</b> ke perpustakaan
-                untuk mengambil buku dan <b>verifikasi data</b> oleh admin. Jika dalam 1 hari setelah pengajuan
-                peminjaman buku anda tidak datang ke perpustakaan, maka pengajuan peminjaman buku akan
-                <b>ditolak</b> oleh admin.
+        <?php if (in_groups('anggota')) : ?>
+            <div class="alert alert-primary d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#info-fill" />
+                </svg>
+                <div>
+                    Pastikan setelah membuat pengajuan peminjaman buku, anda harus <b>datang</b> ke perpustakaan
+                    untuk mengambil buku dan <b>verifikasi data</b> oleh admin. Jika dalam 1 hari setelah pengajuan
+                    peminjaman buku anda tidak datang ke perpustakaan, maka pengajuan peminjaman buku akan
+                    <b>ditolak</b> oleh admin.
+                </div>
             </div>
-        </div>
-        <div class="alert alert-warning d-flex align-items-center" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
-                <use xlink:href="#exclamation-triangle-fill" />
-            </svg>
-            <div>
-                Sebelum admin menyetujui pengajuan peminjaman buku, anda masih dapat <b>merubah</b> tanggal pengembalian ataupun <b>membatalkan</b> pengajuan peminjaman buku.
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div>
+                    Sebelum admin menyetujui pengajuan peminjaman buku, anda masih dapat <b>merubah</b> tanggal pengembalian ataupun <b>membatalkan</b> pengajuan peminjaman buku.
+                </div>
             </div>
-        </div>
+        <?php else : ?>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                    <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div>
+                    Admin dapat melakukan perbaikan data pengajuan peminjaman buku, apabila status pengajuan peminjaman buku berstasus <b>pending</b>.
+                </div>
+            </div>
+        <?php endif ?>
         <div class="info" info_data="<?= session()->getFlashdata('info') ?>"></div>
         <div class="card">
             <div class="card-header">
@@ -101,7 +112,7 @@
                         <h5 class="card-title mb-0">Daftar persetujuan peminjaman buku</h5>
                     </div>
                     <div class="col-md-8 mt-3">
-                        <!-- <a href="<?= base_url('category/form') ?>" class="btn btn-primary float-end"><i class="fas fa-plus"></i> Add</a> -->
+
                     </div>
                 </div>
             </div>

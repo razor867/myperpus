@@ -46,6 +46,14 @@ $(document).ready(function () {
           // showConfirmButton: false,
           // timer: 10000,
         });
+      } else if (infoFlash == "success_change_status") {
+	Swal.fire({
+          icon: "success",
+          title: "Sukses",
+          text: "Perubahan status berhasil dirubah",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       }
     }
   });
