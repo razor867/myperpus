@@ -46,7 +46,7 @@ class Approval extends BaseController
                 foreach ($data_approval as $da) {
                     $now = Time::now('Asia/Jakarta', 'id_ID');
                     if ($da->tgl_expirate < $now) {
-                        $this->m_approval->update($da->id, ['status' => 'rejected']);
+                        $this->m_approval->update($da->id, ['status' => 'rejected', 'updated_by' => user_id()]);
                     }
                 }
             }
@@ -59,7 +59,7 @@ class Approval extends BaseController
     {
         return DataTables::use('_approval')
             ->where($this->where_data())
-            ->select('judul_buku, id_anggota, status, id_buku, id')
+            ->select('judul_buku, anggota, status, id_buku, id')
             ->addColumn('action', function ($data) {
                 if (in_groups('anggota')) {
                     if ($data->status == 'pending') {
@@ -97,10 +97,6 @@ class Approval extends BaseController
                 }
                 return $button_action;
             })
-            ->addColumn('peminjam', function ($data) {
-                $peminjam = $this->getAnggotaName($data->id_anggota);
-                return $peminjam;
-            })
             ->addColumn('status', function ($data) {
                 $status = '<span class="badge ' . (($data->status == 'pending') ? 'bg-warning' : (($data->status == 'approved') ? 'bg-success' : 'bg-danger')) . '">' . $data->status . '</span>';
                 return $status;
@@ -110,7 +106,7 @@ class Approval extends BaseController
                 $this->no_rows = $no;
                 return $no;
             })
-            ->rawColumns(['action', 'peminjam', 'status', 'no'])
+            ->rawColumns(['action', 'status', 'no'])
             ->make(true);
     }
 
@@ -131,7 +127,7 @@ class Approval extends BaseController
             $postData['created_by'] = user_id();
             $postData['tgl_expirate'] = Time::tomorrow('Asia/Jakarta', 'id_ID');
             $check_double_order = $this->m_approval->where(['id_buku' => $postData['id_buku'], 'id_anggota' => user_id(), 'status' => 'pending', 'deleted_at' => NULL])->find();
-            //cek sudah diorder atau belum?
+            //cek sudah pernah diorder atau belum?
             if ($check_double_order) {
                 session()->setFlashdata('info', 'error_pinjam');
             } else {
@@ -189,10 +185,10 @@ class Approval extends BaseController
         $postData['id_anggota'] = user_id();
         if ($status == 'approved') {
             $buku = $this->m_buku->select('stok')->find(decode($id_buku));
-            $this->m_buku->update(decode($id_buku), ['stok' => $buku->stok - 1]);
+            $this->m_buku->update(decode($id_buku), ['stok' => $buku->stok - 1, 'updated_by' => user_id()]);
             $this->m_peminjaman->insert($postData);
         }
-        $this->m_approval->update(decode($id), ['status' => $status]);
+        $this->m_approval->update(decode($id), ['status' => $status, 'updated_by' => user_id()]);
         session()->setFlashdata('info', 'success_change_status');
         return redirect()->to(base_url('peminjaman'));
     }

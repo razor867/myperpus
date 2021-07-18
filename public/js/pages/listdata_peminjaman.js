@@ -67,8 +67,8 @@ $(document).ready(function () {
     },
     columns: [
       { data: "no", name: "no" },
-      { data: "peminjam", name: "peminjam" },
-      { data: "buku", name: "buku" },
+      { data: "anggota", name: "anggota" },
+      { data: "judul_buku", name: "judul_buku" },
       { data: "tgl_pinjam", name: "tgl_pinjam" },
       { data: "tgl_pengembalian", name: "tgl_pengembalian" },
       { data: "action", name: "action" },
@@ -92,7 +92,7 @@ function detail(id_data) {
           detail_content("Peminjam", data.peminjam) +
           detail_content("Total Pinjam", data.total_pinjam) +
           detail_content("Tanggal Pinjam", data.tgl_pinjam) +
-          detail_content("Tanggal Pengembalian", data.tgl_pengembalian);
+          detail_content("Tanggal Harus Dikembalikan", data.tgl_pengembalian);
 
         $(".modal-title").text("Detail");
         $(".modal-body").empty();

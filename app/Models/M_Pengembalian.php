@@ -18,6 +18,8 @@ class M_Pengembalian extends Model
         'id_buku',
         'id_anggota',
         'tgl_dikembalikan',
+        'denda',
+        'ket',
         'created_by',
         'updated_by',
         'deleted_by',

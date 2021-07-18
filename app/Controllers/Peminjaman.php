@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\M_Approval;
 use App\Models\M_Buku;
+use App\Models\M_Pengembalian;
 use App\Models\M_Users;
 use App\Models\Serverside_model;
 use Irsyadulibad\DataTables\DataTables;
@@ -17,6 +18,7 @@ class Peminjaman extends BaseController
     protected $m_buku;
     protected $m_user;
     protected $m_approval;
+    protected $m_pengembalian;
 
     public function __construct()
     {
@@ -26,6 +28,7 @@ class Peminjaman extends BaseController
         $this->m_buku = new M_Buku();
         $this->m_user = new M_Users();
         $this->m_approval = new M_Approval();
+        $this->m_pengembalian = new M_Pengembalian();
     }
 
     public function index()
@@ -42,30 +45,31 @@ class Peminjaman extends BaseController
 
     public function listdata()
     {
-        return DataTables::use('peminjaman')
+        return DataTables::use('_peminjaman')
             ->where($this->where_data())
-            ->select('approval.id_anggota as peminjam, approval.id_buku as buku, approval.tgl_pinjam as tgl_pinjam, approval.tgl_pengembalian as tgl_pengembalian, id_approval')
-            ->join('approval', 'peminjaman.id_approval = approval.id', 'LEFT JOIN')
+            ->select('id, anggota, judul_buku, tgl_pinjam, tgl_pengembalian, id_approval')
             ->addColumn('action', function ($data) {
-                $button_action = '<button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id_approval) . '\')">
+                if (in_groups('anggota')) {
+                    $button_action = '<button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id_approval) . '\')">
                                         <i class="fas fa-info-circle"></i> Detail
-                                  </button>';
+                                    </button>';
+                } else {
+                    $button_action = '<button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->id_approval) . '\')">
+                                        <i class="fas fa-info-circle"></i> Detail
+                                    </button>
+                                    <a href="/peminjaman/form_pengembalian/' . encode($data->id_approval) . '/' . encode($data->id) . '" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-expand-alt"></i> Kembalikan
+                                    </a>';
+                }
+
                 return $button_action;
-            })
-            ->addColumn('buku', function ($data) {
-                $buku = $this->getJudulBuku($data->buku);
-                return $buku;
-            })
-            ->addColumn('peminjam', function ($data) {
-                $peminjam = $this->getNameUser($data->peminjam);
-                return $peminjam;
             })
             ->addColumn('no', function ($data) {
                 $no = $this->no_rows + 1;
                 $this->no_rows = $no;
                 return $no;
             })
-            ->rawColumns(['action', 'no', 'buku', 'peminjam'])
+            ->rawColumns(['action', 'no'])
             ->make(true);
     }
 
@@ -82,12 +86,37 @@ class Peminjaman extends BaseController
         echo json_encode($data);
     }
 
+    public function form_pengembalian($id_approval, $id_peminjaman)
+    {
+        $data['title'] = 'Form Pengembalian Buku';
+        $data['title_page'] = 'Form Pengembalian Buku';
+        $data['menu'] = 'peminjaman';
+        $data['back'] = base_url('peminjaman');
+        $data['validation'] = $this->validation;
+
+        $approval = $this->m_approval->select('id_buku, id_anggota, tgl_pinjam, tgl_pengembalian, total_pinjam')->find(decode($id_approval));
+        $buku = $this->m_buku->find($approval->id_buku);
+
+        $data['judul_buku'] = $buku->judul;
+        $data['id_buku'] = encode($approval->id_buku);
+        $data['id_approval'] = $id_approval;
+        $data['id_anggota'] = encode($approval->id_anggota);
+        $data['peminjam'] = $this->getNameUser($approval->id_anggota, true);
+        $data['tgl_pinjam'] = $approval->tgl_pinjam;
+        $data['tgl_pengembalian'] = $approval->tgl_pengembalian;
+        $data['total_pinjam'] = $approval->total_pinjam;
+        $data['id'] = encode(0);
+        $data['action_url'] = base_url('pengembalian/save/' . $id_approval . '/' . $id_peminjaman);
+
+        return view('peminjaman/form_pengembalian', $data);
+    }
+
     private function where_data()
     {
         if (in_groups('anggota')) {
-            $where = ['peminjaman.deleted_at' => NULL, 'approval.id_anggota' => user_id()];
+            $where = ['id_anggota' => user_id()];
         } else {
-            $where = ['peminjaman.deleted_at' => NULL];
+            $where = [];
         }
         return $where;
     }

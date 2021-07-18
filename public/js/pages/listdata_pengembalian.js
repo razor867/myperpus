@@ -23,25 +23,29 @@ $(document).ready(function () {
       searchPlaceholder: "Search...",
     },
     columnDefs: [
-      {
-        orderable: false,
-        targets: $thead == 4 ? [2, 3] : [2, 3, 4],
-      },
+      // {
+      //   orderable: false,
+      //   targets: $thead == 6 ? [2, 3] : [2, 3, 6],
+      // },
       {
         className: "wrap-max-10",
-        targets: [0, 3],
-      },
-      {
-        className: "wrap-max-40",
-        targets: [1],
+        targets: [0],
       },
       {
         className: "wrap-max-30",
+        targets: [1],
+      },
+      {
+        className: "wrap-max-40",
         targets: [2],
       },
       {
-        className: "wrap-max-10 dt-nowrap",
+        className: "wrap-max-20",
         targets: [4],
+      },
+      {
+        className: "wrap-max-10 dt-nowrap",
+        targets: [3, 5, 6],
       },
     ],
     ordering: false,
@@ -51,7 +55,7 @@ $(document).ready(function () {
     // stateSave: true,
     scrollX: true,
     ajax: {
-      url: "/approval/listdata",
+      url: "/pengembalian/listdata",
       type: "get",
       error: function (e) {
         console.log("data tidak ditemukan di server");
@@ -71,9 +75,11 @@ $(document).ready(function () {
     },
     columns: [
       { data: "no", name: "no" },
-      { data: "judul_buku", name: "judul_buku" },
       { data: "anggota", name: "anggota" },
-      { data: "status", name: "status" },
+      { data: "judul_buku", name: "judul_buku" },
+      { data: "denda", name: "denda" },
+      { data: "ket", name: "ket" },
+      { data: "tgl_dikembalikan", name: "tgl_dikembalikan" },
       { data: "action", name: "action" },
     ],
   });
@@ -81,7 +87,7 @@ $(document).ready(function () {
 
 function detail(id_data) {
   $.ajax({
-    url: "/approval/detail",
+    url: "/pengembalian/detail",
     method: "post",
     dataType: "json",
     data: {
@@ -95,36 +101,11 @@ function detail(id_data) {
           detail_content("Peminjam", data.peminjam) +
           detail_content("Total Pinjam", data.total_pinjam) +
           detail_content("Tanggal Pinjam", data.tgl_pinjam) +
-          detail_content("Tanggal Pengembalian", data.tgl_pengembalian) +
-          detail_content("Tanggal Buat", data.created_at) +
-          detail_content("Status", data.info_status);
+          detail_content("Tanggal Harus Dikembalikan", data.tgl_pengembalian);
 
         $(".modal-title").text("Detail");
         $(".modal-body").empty();
         $(".modal-body").append(msg);
-        if (data.edit_status == false) {
-          $(".modal-footer").find(".change-status").empty();
-        } else {
-          $(".modal-footer").find(".change-status").empty();
-          if (data.status == "pending") {
-            $(".modal-footer")
-              .find(".change-status")
-              .append(
-                '<a href="/approval/change_status/' +
-                  data.id +
-                  "/" +
-                  "approved/" +
-                  data.id_buku +
-                  '" class="btn btn-success" style="margin-right:8px;"><i class="fas fa-check-square"></i> Approve</a>' +
-                  '<a href="/approval/change_status/' +
-                  data.id +
-                  "/" +
-                  "rejected/" +
-                  data.id_buku +
-                  '" class="btn btn-danger"><i class="fas fa-ban"></i> Reject</a>'
-              );
-          }
-        }
         // console.log(data);
       } else {
         msg = "Data tidak ditemukan";

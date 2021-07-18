@@ -176,4 +176,34 @@ class Validation
 			]
 		],
 	];
+
+	public $pengembalian = [
+		'id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'id_buku' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'id_anggota' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'id_approval' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'denda' => [
+			'rules'  => 'permit_empty|numeric',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'tgl_dikembalikan' => [
+			'rules'  => 'required|valid_date',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'ket' => [
+			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
+		],
+	];
 }
