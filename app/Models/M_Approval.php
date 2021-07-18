@@ -18,6 +18,7 @@ class M_Approval extends Model
         'id_anggota',
         'total_pinjam',
         'tgl_pinjam',
+        'tgl_expirate',
         'tgl_pengembalian',
         'status',
         'created_by',

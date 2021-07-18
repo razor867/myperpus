@@ -42,10 +42,12 @@ class Approval extends BaseController
 
             // cek apakah ada tiket pengajuan yang expirate?
             if (in_groups('anggota') == false) {
+                $now = Time::now('Asia/Jakarta', 'id_ID');
+                $now = date('Y-m-d', strtotime($now));
                 $data_approval = $this->m_approval->select('id, tgl_expirate')->where(['status' => 'pending', 'deleted_at' => NULL])->findAll();
                 foreach ($data_approval as $da) {
-                    $now = Time::now('Asia/Jakarta', 'id_ID');
-                    if ($da->tgl_expirate < $now) {
+                    $exp = date('Y-m-d', strtotime($da->tgl_expirate));
+                    if ($exp < $now) {
                         $this->m_approval->update($da->id, ['status' => 'rejected', 'updated_by' => user_id()]);
                     }
                 }
