@@ -74,6 +74,14 @@
                             </a>
                         </li>
 
+                        <?php if (in_groups('anggota') == false) : ?>
+                            <li class="sidebar-item <?= ($menu == 'users') ? 'active' : '' ?>">
+                                <a class="sidebar-link" href="<?= base_url('users') ?>">
+                                    <i class="align-middle" data-feather="users"></i> <span class="align-middle">users</span>
+                                </a>
+                            </li>
+                        <?php endif ?>
+
                     <?php endif ?>
 
                     <li class="sidebar-item <?= ($menu == 'profile') ? 'active' : '' ?>">

@@ -24,10 +24,14 @@ class Category extends BaseController
         if (user()->update_bio == 0) {
             return redirect()->to(base_url('home/form_edit_profile'));
         } else {
-            $data['title'] = 'Kategori';
-            $data['title_page'] = 'Kategori';
-            $data['menu'] = 'kategori';
-            return view('kategori/kategori', $data);
+            if (in_groups('anggota') == false) {
+                $data['title'] = 'Kategori';
+                $data['title_page'] = 'Kategori';
+                $data['menu'] = 'kategori';
+                return view('kategori/kategori', $data);
+            } else {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
         }
     }
 
