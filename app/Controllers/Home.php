@@ -95,6 +95,7 @@ class Home extends BaseController
 				$this->m_authGroupsUsers->insert(['group_id' => $userGroupsID[0]->id, 'user_id' => user()->id]);
 			}
 		}
+		$this->m_user->update($id, $user);
 		$this->m_user->update($id, $postData);
 
 		session()->setFlashdata('info', 'success_edit');

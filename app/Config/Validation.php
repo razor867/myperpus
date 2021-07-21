@@ -206,4 +206,64 @@ class Validation
 			'rules'  => 'permit_empty|regex_match[/^[\w\s ,.]+$/]',
 		],
 	];
+
+	public $users_add = [
+		'id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'username' => [
+			'rules'  => 'required|alpha_numeric_space|min_length[3]|max_length[30]|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'email' => [
+			'rules'  => 'required|valid_email',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'password' => [
+			'rules'  => 'required|strong_password|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'pass_confirm' => [
+			'rules'  => 'required|matches[password]|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'group_id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+	];
+
+	public $users_edit = [
+		'id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+		'username' => [
+			'rules'  => 'required|alpha_numeric_space|min_length[3]|max_length[30]|regex_match[/^[\w\s ,.]+$/]',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'email' => [
+			'rules'  => 'required|valid_email',
+			'errors' => [
+				'required' => 'Wajib diisi!',
+			]
+		],
+		'password' => [
+			'rules'  => 'permit_empty|strong_password|regex_match[/^[\w\s ,.]+$/]',
+		],
+		'pass_confirm' => [
+			'rules'  => 'permit_empty|matches[password]|regex_match[/^[\w\s ,.]+$/]',
+		],
+		'group_id' => [
+			'rules' => 'required|alpha_numeric',
+		],
+	];
 }

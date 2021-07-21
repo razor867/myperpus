@@ -4,6 +4,8 @@ function deleteData(page, id) {
     link = "/buku/delete/" + id;
   } else if (page == "_datcat") {
     link = "/category/delete/" + id;
+  } else if (page == "_datusr") {
+    link = "/users/delete/" + id;
   }
 
   Swal.fire({

@@ -25,11 +25,14 @@
     <div class="mb-3 row">
         <label for="password" class="col-sm-4 col-form-label">Password</label>
         <div class="col-sm-8">
-            <input type="password" class="form-control <?= ($validation->hasError('password') ? 'is-invalid' : '') ?>" id="password" name="password" autofocus value="">
-            <small>Biarkan kosong jika password tidak ingin dirubah!</small>
-            <div class="invalid-feedback">
-                <?= $validation->getError('password') ?>
+            <div class="input-group">
+                <input type="password" class="form-control <?= ($validation->hasError('password') ? 'is-invalid' : '') ?>" id="password" name="password" autofocus value="" aria-label="password" aria-described="show-password">
+                <button class="btn btn-outline-secondary show-ps" type="button" id="show-password"><i class="fas fa-eye-slash eye-pass"></i></button>
+                <div class="invalid-feedback">
+                    <?= $validation->getError('password') ?>
+                </div>
             </div>
+            <small>Biarkan kosong jika password tidak ingin dirubah!</small>
         </div>
     </div>
     <div class="mb-3 row">

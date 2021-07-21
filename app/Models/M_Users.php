@@ -17,12 +17,16 @@ class M_Users extends Model
         'username',
         'email',
         'update_bio',
-        // 'password',
+        'password_hash',
         'firstname',
         'lastname',
         'nis',
         'jk',
         'tlp',
         'about',
+        'active',
+        // 'created_by',
+        // 'updated_by',
+        // 'deleted_by',
     ];
 }

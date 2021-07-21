@@ -15,6 +15,16 @@
     ul#select2-jk-results li {
         font-size: 14px;
     }
+
+    span#select2-group_id-container,
+    span#select2-jk-container {
+        font-size: 14px;
+    }
+
+    ul#select2-group_id-results li,
+    ul#select2-jk-results li {
+        font-size: 14px;
+    }
 </style>
 <?= $this->endSection() ?>
 
@@ -32,6 +42,32 @@
             theme: "bootstrap-5",
         });
         $('.swal2-container').find('.select2').css('display', 'none');
+
+        var inp_pass = document.getElementById("password");
+        var inp_pass_conf = document.getElementById("pass_confirm");
+        $('#show-password').click(function() {
+            if (inp_pass.type === "password") {
+                inp_pass.type = "text";
+                $('.eye-pass').addClass('fa-eye');
+                $('.eye-pass').removeClass('fa-eye-slash');
+            } else {
+                inp_pass.type = "password";
+                $('.eye-pass').addClass('fa-eye-slash');
+                $('.eye-pass').removeClass('fa-eye');
+            }
+        })
+
+        $('#show-pass_confirm').click(function() {
+            if (inp_pass_conf.type === "password") {
+                inp_pass_conf.type = "text";
+                $('.eye-pass-conf').addClass('fa-eye');
+                $('.eye-pass-conf').removeClass('fa-eye-slash');
+            } else {
+                inp_pass_conf.type = "password";
+                $('.eye-pass-conf').addClass('fa-eye-slash');
+                $('.eye-pass-conf').removeClass('fa-eye');
+            }
+        })
     })
 </script>
 <?= $this->endSection() ?>
