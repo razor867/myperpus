@@ -56,18 +56,26 @@ class Users extends BaseController
                                   </a>
                                   <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datusr\',\'' . encode($data->users_id) . '\')" title="Delete">
                                     <i class="fas fa-trash-alt"></i>
-                                  </a>';
+                                  </a>
+                                  <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->users_id) . '\')">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                  </button>';
                 } else {
                     //admin tidak boleh hapus atau edit super admin
                     if ($data->pengguna == 'wahyu') {
-                        $button_action = '';
+                        $button_action = '<button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->users_id) . '\')">
+                                            <i class="fas fa-info-circle"></i> Detail
+                                        </button>';
                     } else {
                         $button_action = '<a href="' . base_url('users/form/' . encode($data->users_id)) . '" class="btn btn-warning btn-sm" title="Edit">
                                     <i class="fas fa-edit"></i>
                                   </a>
                                   <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteData(\'_datusr\',\'' . encode($data->users_id) . '\')" title="Delete">
                                     <i class="fas fa-trash-alt"></i>
-                                  </a>';
+                                  </a>
+                                  <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->users_id) . '\')">
+                                        <i class="fas fa-info-circle"></i> Detail
+                                    </button>';
                     }
                 }
                 return $button_action;
@@ -163,5 +171,15 @@ class Users extends BaseController
         session()->setFlashdata('info', 'success_delete');
 
         return redirect()->to(base_url('users'));
+    }
+
+    public function detail()
+    {
+        $this->request->isAJAX() or exit();
+
+        $id = decode($this->request->getPost('id'));
+        $data = $this->m_users->select('firstname, lastname, nis')->find($id);
+        $data->nama = $data->firstname . ' ' . $data->lastname;
+        return json_encode($data);
     }
 }

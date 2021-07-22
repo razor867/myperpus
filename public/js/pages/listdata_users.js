@@ -24,7 +24,7 @@ $(document).ready(function () {
     columnDefs: [
       {
         orderable: false,
-        targets: $thead == 3 ? [] : [3],
+        targets: $thead == 4 ? [] : [4],
       },
       {
         className: "wrap-max-10",
@@ -64,61 +64,44 @@ $(document).ready(function () {
   });
 });
 
-// function detail(id_data) {
-//   $.ajax({
-//     url: "/buku/detail",
-//     method: "post",
-//     dataType: "json",
-//     data: {
-//       id: id_data,
-//     },
-//     success: function (data) {
-//       let msg = "";
-//       if (data != "error") {
-//         msg +=
-//           detail_content("Penulis", data.penulis) +
-//           detail_content("Penerbit", data.penerbit) +
-//           detail_content("Jumlah Buku", data.jml_buku) +
-//           detail_content("Stok Tersedia", data.stok) +
-//           detail_content("Detail", data.deskripsi);
+function detail(id_data) {
+  $.ajax({
+    url: "/users/detail",
+    method: "post",
+    dataType: "json",
+    data: {
+      id: id_data,
+    },
+    success: function (data) {
+      let msg = "";
+      if (data != "error") {
+        msg +=
+          detail_content("Nama Lengkap", data.nama) +
+          detail_content("NIS", data.nis);
 
-//         $(".modal-title").text(data.judul);
-//         $(".modal-body").empty();
-//         $(".modal-body").append(msg);
-//         if (data.stok < 1) {
-//           $(".modal-footer").find(".pinjam").empty();
-//         } else {
-//           $(".modal-footer").find(".pinjam").empty();
-//           $(".modal-footer")
-//             .find(".pinjam")
-//             .append(
-//               '<a href="/buku/pinjam/' +
-//                 data.id +
-//                 "/" +
-//                 "book" +
-//                 '" class="btn btn-primary"><i class="fas fa-expand-alt"></i> Pinjam</a>'
-//             );
-//         }
-//         // console.log(data);
-//       } else {
-//         msg = "Data tidak ditemukan";
-//         $(".modal-title").text(msg);
-//         $(".modal-body").text(msg);
-//       }
-//     },
-//   });
-// }
+        $(".modal-title").text("Detail User");
+        $(".modal-body").empty();
+        $(".modal-body").append(msg);
+        // console.log(data);
+      } else {
+        msg = "Data tidak ditemukan";
+        $(".modal-title").text(msg);
+        $(".modal-body").text(msg);
+      }
+    },
+  });
+}
 
-// function detail_content(label, data) {
-//   let content =
-//     '<div class="mb-3 row">' +
-//     '<div class="col-md-4"><span style="font-weight: 600;">' +
-//     label +
-//     " " +
-//     '<div class="float-end">:</div></span></div>' +
-//     '<div class="col-md-8">' +
-//     data +
-//     "</div>" +
-//     "</div>";
-//   return content;
-// }
+function detail_content(label, data) {
+  let content =
+    '<div class="mb-3 row">' +
+    '<div class="col-md-4"><span style="font-weight: 600;">' +
+    label +
+    " " +
+    '<div class="float-end">:</div></span></div>' +
+    '<div class="col-md-8">' +
+    data +
+    "</div>" +
+    "</div>";
+  return content;
+}
