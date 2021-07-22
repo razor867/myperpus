@@ -57,7 +57,15 @@
                     <option value="">Pilih Role</option>
                 <?php endif ?>
                 <?php foreach ($group as $grp) : ?>
-                    <option value="<?= encode($grp->id) ?>"><?= $grp->name ?></option>
+                    <?php if (in_groups('super admin')) : ?>
+                        <option value="<?= encode($grp->id) ?>"><?= $grp->name ?></option>
+                    <?php else : ?>
+                        <?php if ($grp->name == 'super admin' || $grp->name == 'admin') : ?>
+                            <?php continue ?>
+                        <?php else : ?>
+                            <option value="<?= encode($grp->id) ?>"><?= $grp->name ?></option>
+                        <?php endif ?>
+                    <?php endif ?>
                 <?php endforeach ?>
             </select>
             <div class="invalid-feedback">
