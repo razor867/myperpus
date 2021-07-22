@@ -2,10 +2,13 @@
 
 namespace App\Controllers;
 
+use App\Models\M_Approval;
 use App\Models\M_Users;
 use Myth\Auth\Entities\User;
 use App\Models\M_authGroupsUsers;
+use App\Models\M_Buku;
 use App\Models\M_Groups;
+use App\Models\M_Peminjaman;
 
 class Home extends BaseController
 {
@@ -14,6 +17,9 @@ class Home extends BaseController
 	protected $config;
 	protected $m_authGroupsUsers;
 	protected $m_groups;
+	protected $m_buku;
+	protected $m_approval;
+	protected $m_peminjaman;
 
 	public function __construct()
 	{
@@ -22,6 +28,9 @@ class Home extends BaseController
 		$this->m_authGroupsUsers = new M_authGroupsUsers();
 		$this->m_groups = new M_Groups();
 		$this->config = config('Auth');
+		$this->m_buku = new M_Buku();
+		$this->m_approval = new M_Approval();
+		$this->m_peminjaman = new M_Peminjaman();
 	}
 
 	public function index()
@@ -32,6 +41,16 @@ class Home extends BaseController
 			$data['title'] = 'Dashboard';
 			$data['title_page'] = 'Dashboard';
 			$data['menu'] = 'dashboard';
+			$data['total_buku'] = count($this->m_buku->where(['deleted_at' => NULL])->findAll());
+			$data['total_pengguna'] = count($this->m_user->where(['deleted_at' => NULL, 'update_bio' => 1])->findAll());
+			if (in_groups('anggota')) {
+				$data['total_persetujuan'] = count($this->m_approval->where(['deleted_at' => NULL, 'status' => 'pending', 'id_anggota' => user_id()])->findAll());
+				$data['total_peminjaman'] = count($this->m_peminjaman->where(['deleted_at' => NULL, 'id_anggota' => user_id()])->findAll());
+			} else {
+				$data['total_persetujuan'] = count($this->m_approval->where(['deleted_at' => NULL, 'status' => 'pending'])->findAll());
+				$data['total_peminjaman'] = count($this->m_peminjaman->where(['deleted_at' => NULL])->findAll());
+			}
+
 			return view('home/dashboard', $data);
 		}
 	}
