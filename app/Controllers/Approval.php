@@ -184,7 +184,8 @@ class Approval extends BaseController
         $postData['id_approval'] = decode($id);
         $postData['created_by'] = user_id();
         $postData['id_buku'] = decode($id_buku);
-        $postData['id_anggota'] = user_id();
+        $approval = $this->m_approval->find(decode($id));
+        $postData['id_anggota'] = $approval->id;
         if ($status == 'approved') {
             $buku = $this->m_buku->select('stok')->find(decode($id_buku));
             $this->m_buku->update(decode($id_buku), ['stok' => $buku->stok - 1, 'updated_by' => user_id()]);
