@@ -81,7 +81,7 @@
         </svg>
         <div>
             <b>Denda</b> dan <b>Keterangan</b> hanya opsional. Jika terjadi keterlambatan pengembalian buku, masukan <b>Denda</b> dan <b>Keterangannya</b>.
-            Apabila terjadi kehilangan buku, tetap input <b>Tanggal pengembaliannya</b> lalu isi juga
+            Apabila terjadi kehilangan buku, tetap input <b>Tanggal dikembalikannya buku</b> lalu isi juga
             <b>Denda</b> dan <b>Keterangannya</b>.
         </div>
     </div>

@@ -130,7 +130,7 @@ class Category extends BaseController
             $dompdf->stream($fileName);
         } else {
             $spreadsheet = new Spreadsheet();
-            $data = $this->m_category->findAll();
+            $data = $this->m_category->select('nama, deskripsi')->findAll();
 
             $spreadsheet->setActiveSheetIndex(0)
                 ->setCellValue('A1', 'Nama')
@@ -165,7 +165,7 @@ class Category extends BaseController
 
     private function html_content($judul)
     {
-        $data = $this->m_category->findAll();
+        $data = $this->m_category->select('nama, deskripsi')->findAll();
         $no = 1;
         $html = '<html>
                     <head>

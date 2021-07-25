@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\_Approval;
 use App\Models\M_Approval;
 use App\Models\M_Buku;
 use App\Models\Serverside_model;
@@ -9,6 +10,12 @@ use App\Models\M_Users;
 use App\Models\M_Peminjaman;
 use CodeIgniter\I18n\Time;
 use Irsyadulibad\DataTables\DataTables;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Approval extends BaseController
 {
@@ -19,6 +26,7 @@ class Approval extends BaseController
     protected $m_buku;
     protected $m_peminjaman;
     protected $no_rows;
+    protected $_approval_view;
 
     public function __construct()
     {
@@ -29,6 +37,7 @@ class Approval extends BaseController
         $this->m_buku = new M_Buku();
         $this->m_peminjaman = new M_Peminjaman();
         $this->no_rows = 0;
+        $this->_approval_view = new _Approval();
     }
 
     public function index()
@@ -185,7 +194,7 @@ class Approval extends BaseController
         $postData['created_by'] = user_id();
         $postData['id_buku'] = decode($id_buku);
         $approval = $this->m_approval->find(decode($id));
-        $postData['id_anggota'] = $approval->id;
+        $postData['id_anggota'] = $approval->id_anggota;
         if ($status == 'approved') {
             $buku = $this->m_buku->select('stok')->find(decode($id_buku));
             $this->m_buku->update(decode($id_buku), ['stok' => $buku->stok - 1, 'updated_by' => user_id()]);
@@ -193,7 +202,11 @@ class Approval extends BaseController
         }
         $this->m_approval->update(decode($id), ['status' => $status, 'updated_by' => user_id()]);
         session()->setFlashdata('info', 'success_change_status');
-        return redirect()->to(base_url('peminjaman'));
+        if ($status == 'approved') {
+            return redirect()->to(base_url('peminjaman'));
+        } else {
+            return redirect()->to(base_url('approval'));
+        }
     }
 
     private function where_data()
@@ -221,5 +234,132 @@ class Approval extends BaseController
     {
         $data = $this->m_buku->select('judul')->find($id);
         return $data->judul;
+    }
+
+    public function convert_document($to)
+    {
+        $fileName = (in_groups('anggota') ? date('Y-m-d') . '-Data-Persetujuan (' . user()->firstname . ' ' . user()->lastname . ')' : date('Y-m-d') . '-Data-Persetujuan');
+        if ($to == 'pdf') {
+            $options = new Options();
+            $options->setChroot(FCPATH);
+            $options->set('isRemoteEnabled', true);
+            $dompdf = new Dompdf($options);
+            $dompdf->loadHtml($this->html_content('Data Persetujuan'));
+            $dompdf->setPaper('A4', 'potrait');
+            $dompdf->render();
+            $dompdf->stream($fileName);
+        } else {
+            $spreadsheet = new Spreadsheet();
+            if (in_groups('anggota')) {
+                $data = $this->_approval_view->select('judul_buku, anggota, status')->where(['id_anggota' => user_id()])->findAll();
+            } else {
+                $data = $this->_approval_view->select('judul_buku, anggota, status')->findAll();
+            }
+
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'Judul Buku')
+                ->setCellValue('B1', 'Peminjam')
+                ->setCellValue('C1', 'Status');
+
+            $column = 2;
+            foreach ($data as $dt) {
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $column, $dt->judul_buku)
+                    ->setCellValue('B' . $column, $dt->anggota)
+                    ->setCellValue('C' . $column, $dt->status);
+                $column++;
+            }
+
+            if ($to == 'excel') {
+                $writer = new Xlsx($spreadsheet);
+            } else if ($to == 'csv') {
+                $writer = new Csv($spreadsheet);
+            }
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            if ($to == 'excel') {
+                header('Content-Disposition: attachment;filename=' . $fileName . '.xlsx');
+            } else if ($to == 'csv') {
+                header('Content-Disposition: attachment;filename=' . $fileName . '.csv');
+            }
+            header('Cache-Control: max-age=0');
+
+            $writer->save('php://output');
+            exit();
+        }
+    }
+
+    private function html_content($judul)
+    {
+        if (in_groups('anggota')) {
+            $data = $this->_approval_view->select('judul_buku, anggota, status')->where(['id_anggota' => user_id()])->findAll();
+        } else {
+            $data = $this->_approval_view->select('judul_buku, anggota, status')->findAll();
+        }
+        $no = 1;
+        $html = '<html>
+                    <head>
+                        <title>Document</title>
+                        <meta charset="UTF-8">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                            .content-table {
+                                max-width: inherit;
+                            }
+                            .table {
+                                font-family: sans-serif;
+                                color: #444;
+                                border-collapse: collapse;
+                                border: 1px solid #f2f5f7;
+                                width: 100%;
+                                font-size: 12px;
+                            }
+                            .table tr th{
+                                background: #35A9DB;
+                                color: #fff;
+                                font-weight: normal;
+                            }
+                            .table, th {
+                                padding: 5px;
+                                text-align: left;
+                            }
+                            td {
+                                padding: 5px;
+                                text-align: left;
+                            }
+                            .table tr:nth-child(even) {
+                                background-color: #f2f2f2;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div style="display:inline;"><img id="logo" src="./img/logo.png" width="65" alt="Logo"></div>
+                        <div style="display:inline-block;">
+                            <h3 style="text-decoration: underline;margin-bottom:5px; margin-left:10px;">' . $judul . '</h3>
+                            <h5 style="display:inline; margin-left:10px;">Myperpus | SMKN 1 CIKAMPEK </h5>
+                            <small style="display:inline">- Kabupaten Karawang, Jawa Barat 41373</small>
+                        </div>
+                        <hr style="margin-top:0"><div class="content-table">
+                        <table class="table" width="100">
+                            <tr>
+                                <th>#</th>
+                                <th>Judul Buku</th>
+                                <th>Anggota</th>
+                                <th>Status</th>
+                            </tr>';
+        foreach ($data as $dt) {
+            $html .=        '<tr>
+                                <td>' . $no . '</td>
+                                <td>' . $dt->judul_buku . '</td>
+                                <td>' . $dt->anggota . '</td>
+                                <td>' . $dt->status . '</td>
+                            </tr>';
+            $no++;
+        }
+        $html .=        '</table></div>
+                    </body>
+                </html>';
+        return $html;
     }
 }
