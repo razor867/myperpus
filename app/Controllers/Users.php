@@ -62,7 +62,7 @@ class Users extends BaseController
                                   </button>';
                 } else {
                     //admin tidak boleh hapus atau edit super admin
-                    if ($data->pengguna == 'wahyu') {
+                    if ($data->role == 'admin' || $data->role == 'super admin') {
                         $button_action = '<button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalData" title="Detail"  onclick="detail(\'' . encode($data->users_id) . '\')">
                                             <i class="fas fa-info-circle"></i> Detail
                                         </button>';
