@@ -45,6 +45,17 @@
                     </div>
                     <div class="col-md-8 mt-3">
                         <a href="<?= base_url('category/form') ?>" class="btn btn-primary float-end"><i class="fas fa-plus"></i> Add</a>
+                        <div class="dropdown float-end" style="margin-right:10px">
+                            <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Export
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" href="<?= base_url('category/convert_document/' . 'excel') ?>"><i class="fas fa-file-excel"></i> Excel</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('category/convert_document/' . 'csv') ?>"><i class="fas fa-file-csv"></i> CSV</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('category/convert_document/' . 'pdf') ?>"><i class="fas fa-file-pdf"></i> PDF</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

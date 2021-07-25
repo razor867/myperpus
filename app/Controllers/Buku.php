@@ -8,6 +8,12 @@ use App\Models\M_Buku;
 use App\Models\M_Category;
 use App\Models\Serverside_model;
 use Irsyadulibad\DataTables\DataTables;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class Buku extends BaseController
 {
@@ -190,5 +196,140 @@ class Buku extends BaseController
         }
 
         return view('buku/form_pinjam', $data);
+    }
+
+    public function convert_document($to)
+    {
+        $fileName = date('Y-m-d') . '-Data-Buku';
+        if ($to == 'pdf') {
+            $options = new Options();
+            $options->setChroot(FCPATH);
+            $options->set('isRemoteEnabled', true);
+            $dompdf = new Dompdf($options);
+            $dompdf->loadHtml($this->html_content('Data Buku'));
+            $dompdf->setPaper('A4', 'potrait');
+            $dompdf->render();
+            $dompdf->stream($fileName);
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $data = $this->m_buku->data_buku_convert();
+
+            $spreadsheet->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'Judul')
+                ->setCellValue('B1', 'Penulis')
+                ->setCellValue('C1', 'Penerbit')
+                ->setCellValue('D1', 'Kategori')
+                ->setCellValue('E1', 'Deskripsi')
+                ->setCellValue('F1', 'Jml_buku')
+                ->setCellValue('G1', 'Stok');
+
+            $column = 2;
+            foreach ($data as $dt) {
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $column, $dt->judul)
+                    ->setCellValue('B' . $column, $dt->penulis)
+                    ->setCellValue('C' . $column, $dt->penerbit)
+                    ->setCellValue('D' . $column, $dt->kategori)
+                    ->setCellValue('E' . $column, $dt->deskripsi)
+                    ->setCellValue('F' . $column, $dt->jml_buku)
+                    ->setCellValue('G' . $column, $dt->stok);
+                $column++;
+            }
+
+            if ($to == 'excel') {
+                $writer = new Xlsx($spreadsheet);
+            } else if ($to == 'csv') {
+                $writer = new Csv($spreadsheet);
+            }
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            if ($to == 'excel') {
+                header('Content-Disposition: attachment;filename=' . $fileName . '.xlsx');
+            } else if ($to == 'csv') {
+                header('Content-Disposition: attachment;filename=' . $fileName . '.csv');
+            }
+            header('Cache-Control: max-age=0');
+
+            $writer->save('php://output');
+            exit();
+        }
+    }
+
+    private function html_content($judul)
+    {
+        $data = $this->m_buku->data_buku_convert();
+        $no = 1;
+        $html = '<html>
+                    <head>
+                        <title>Document</title>
+                        <meta charset="UTF-8">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                            .content-table {
+                                max-width: inherit;
+                            }
+                            .table {
+                                font-family: sans-serif;
+                                color: #444;
+                                border-collapse: collapse;
+                                border: 1px solid #f2f5f7;
+                                width: 100%;
+                                font-size: 12px;
+                            }
+                            .table tr th{
+                                background: #35A9DB;
+                                color: #fff;
+                                font-weight: normal;
+                            }
+                            .table, th {
+                                padding: 5px;
+                                text-align: left;
+                            }
+                            td {
+                                padding: 5px;
+                                text-align: left;
+                            }
+                            .table tr:nth-child(even) {
+                                background-color: #f2f2f2;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div style="display:inline;"><img id="logo" src="./img/logo.png" width="65" alt="Logo"></div>
+                        <div style="display:inline-block;">
+                            <h3 style="text-decoration: underline;margin-bottom:5px; margin-left:10px;">' . $judul . '</h3>
+                            <h5 style="display:inline; margin-left:10px;">Myperpus | SMKN 1 CIKAMPEK </h5>
+                            <small style="display:inline">- Kabupaten Karawang, Jawa Barat 41373</small>
+                        </div>
+                        <hr style="margin-top:0"><div class="content-table">
+                        <table class="table" width="100">
+                            <tr>
+                                <th>#</th>
+                                <th>Judul</th>
+                                <th>Penulis</th>
+                                <th>Penerbit</th>
+                                <th>Kategori</th>
+                                <th>Deskripsi</th>
+                                <th>Jml_buku</th>
+                                <th>Stok</th>
+                            </tr>';
+        foreach ($data as $dt) {
+            $html .=        '<tr>
+                                <td>' . $no . '</td>
+                                <td>' . $dt->judul . '</td>
+                                <td>' . $dt->penulis . '</td>
+                                <td>' . $dt->penerbit . '</td>
+                                <td>' . $dt->kategori . '</td>
+                                <td>' . $dt->deskripsi . '</td>
+                                <td>' . $dt->jml_buku . '</td>
+                                <td>' . $dt->stok . '</td>
+                            </tr>';
+            $no++;
+        }
+        $html .=        '</table></div>
+                    </body>
+                </html>';
+        return $html;
     }
 }
