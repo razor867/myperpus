@@ -38,6 +38,8 @@ class Users extends BaseController
                 $data['menu'] = 'users';
 
                 return view('users/users', $data);
+            } else {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
             }
         }
     }
