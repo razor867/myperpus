@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="mb-3 row">
-        <label for="penulis" class="col-sm-4 col-form-label">Penulis</label>
+        <label for="penulis" class="col-sm-4 col-form-label">Penulis / Penyusun</label>
         <div class="col-sm-8">
             <input type="text" class="form-control <?= ($validation->hasError('penulis') ? 'is-invalid' : '') ?>" id="penulis" name="penulis" autofocus value="<?= ($is_edit) ? $penulis : old('penulis') ?>">
             <div class="invalid-feedback">

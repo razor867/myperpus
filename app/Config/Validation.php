@@ -65,7 +65,7 @@ class Validation
 			'rules' => 'required|alpha_numeric',
 		],
 		'judul' => [
-			'rules'  => 'required|regex_match[/^[\w\s ,.]+$/]',
+			'rules'  => 'required|regex_match[/^[\w\s ,.()&]+$/]',
 			'errors' => [
 				'required' => 'Wajib diisi!',
 			]

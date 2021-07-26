@@ -62,7 +62,7 @@ class Buku extends BaseController
             $data['penerbit'] = $getData->penerbit;
             $data['category_id'] = encode($getData->category_id);
             $data['jml_buku'] = $getData->jml_buku;
-            $data['category_name'] = $this->m_category->find(decode($id));
+            $data['category_name'] = $this->m_category->find($getData->category_id);
             $data['deskripsi'] = $getData->deskripsi;
             $data['action_url'] = base_url('buku/save/' . $id);
             $data['is_edit'] = true;
