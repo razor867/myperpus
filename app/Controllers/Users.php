@@ -158,7 +158,8 @@ class Users extends BaseController
             // $postData['updated_by'] = user_id();
             $this->m_users->update($id, $postData);
             $postData['user_id'] = $id;
-            $this->m_authGroupsUsers->update($id, $postData);
+            $group_id = $this->m_authGroupsUsers->where(['user_id' => $id])->find();
+            $this->m_authGroupsUsers->update($group_id[0]->id, $postData);
             session()->setFlashdata('info', 'success_edit');
         }
 
