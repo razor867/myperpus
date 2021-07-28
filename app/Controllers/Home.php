@@ -99,22 +99,25 @@ class Home extends BaseController
 		$id = decode($id);
 		$postData = $this->request->getPost();
 
-		//save password
-		$allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
-		$user = new User($this->request->getPost($allowedPostFields));
-
 		if (user()->update_bio == 0) {
 			$postData['update_bio'] = 1;
-			if (in_groups('super admin') == false && in_groups('admin') == false) {
-				//Menambahkan user yg register ke user group "anggota".
-				//pastikan sudah membuat membuat user group "anggota" di tabel "auth_groups"
-				//itu bisa dilakukan di php my admin.
-				$userGroupsID = $this->m_groups->where('name', 'anggota')->find();
+			// if (in_groups('super admin') == false && in_groups('admin') == false) {
+			// 	//Menambahkan user yg register ke user group "anggota".
+			// 	//pastikan sudah membuat membuat user group "anggota" di tabel "auth_groups"
+			// 	//itu bisa dilakukan di php my admin.
+			// 	$userGroupsID = $this->m_groups->where('name', 'anggota')->find();
 
-				$this->m_authGroupsUsers->insert(['group_id' => $userGroupsID[0]->id, 'user_id' => user()->id]);
-			}
+			// 	$this->m_authGroupsUsers->insert(['group_id' => $userGroupsID[0]->id, 'user_id' => user()->id]);
+			// }
 		}
-		$this->m_user->update($id, $user);
+
+		$length_pass = strlen($postData['password']);
+		if ($length_pass != 0) {
+			//save password
+			$allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
+			$user = new User($this->request->getPost($allowedPostFields));
+			$this->m_user->update($id, $user);
+		}
 		$this->m_user->update($id, $postData);
 
 		session()->setFlashdata('info', 'success_edit');

@@ -48,7 +48,7 @@
                             </a>
                         </li>
 
-                        <?php if (in_groups('anggota') == false) : ?>
+                        <?php if (!in_groups('anggota')) : ?>
                             <li class="sidebar-item <?= ($menu == 'kategori') ? 'active' : '' ?>">
                                 <a class="sidebar-link" href="<?= base_url('category') ?>">
                                     <i class="align-middle" data-feather="tag"></i> <span class="align-middle">Kategori</span>
@@ -74,7 +74,7 @@
                             </a>
                         </li>
 
-                        <?php if (in_groups('anggota') == false) : ?>
+                        <?php if (!in_groups('anggota')) : ?>
                             <li class="sidebar-item <?= ($menu == 'users') ? 'active' : '' ?>">
                                 <a class="sidebar-link" href="<?= base_url('users') ?>">
                                     <i class="align-middle" data-feather="users"></i> <span class="align-middle">users</span>

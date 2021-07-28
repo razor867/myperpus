@@ -139,11 +139,11 @@ class Users extends BaseController
         }
         $postData = $this->request->getPost();
         $postData['group_id'] = decode($postData['group_id']);
-        $allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
-        $user = new User($this->request->getPost($allowedPostFields));
 
         $id = decode($postData['id']);
         if ($id == 0) {
+            $allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
+            $user = new User($this->request->getPost($allowedPostFields));
             $this->m_users->insert($user);
             // $postData['created_by'] = user_id();
             $id_newUser = $this->m_users->select('id')->where(['deleted_at' => NULL])->orderBy('id', 'DESC')->first();
@@ -154,7 +154,12 @@ class Users extends BaseController
             $this->m_authGroupsUsers->insert($postData);
             session()->setFlashdata('info', 'success_add');
         } else {
-            $this->m_users->update($id, $user);
+            $length_pass = strlen($postData['password']);
+            if ($length_pass != 0) {
+                $allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
+                $user = new User($this->request->getPost($allowedPostFields));
+                $this->m_users->update($id, $user);
+            }
             // $postData['updated_by'] = user_id();
             $this->m_users->update($id, $postData);
             $postData['user_id'] = $id;
