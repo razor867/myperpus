@@ -74,6 +74,7 @@ class Pengembalian extends BaseController
             $this->m_peminjaman->update(decode($id_peminjaman), ['deleted_by' => user_id()]);
             $this->m_peminjaman->delete(decode($id_peminjaman));
             $this->m_buku->update($postData['id_buku'], ['stok' => $buku->stok + 1, 'updated_by' => user_id()]);
+            $postData['denda'] = (empty($postData['denda'])) ? 0 : $postData['denda'];
             $this->m_pengembalian->insert($postData);
 
             session()->setFlashdata('info', 'success_add');
