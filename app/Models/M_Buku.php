@@ -32,6 +32,7 @@ class M_Buku extends Model
         $builder->select('buku.judul, buku.penulis, buku.penerbit, category.nama as kategori, buku.deskripsi, buku.jml_buku, buku.stok');
         $builder->join('category', 'category.id = buku.category_id', 'left');
         $builder->where(['buku.deleted_at' => NULL]);
+        $builder->orderBy('buku.judul', 'ASC');
         $query = $builder->get();
         return $query->getResult();
     }
