@@ -159,6 +159,7 @@ class Peminjaman extends BaseController
             $dompdf->setPaper('A4', 'potrait');
             $dompdf->render();
             $dompdf->stream($fileName);
+            exit();
         } else {
             $spreadsheet = new Spreadsheet();
             if (in_groups('anggota')) {

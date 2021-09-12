@@ -210,6 +210,7 @@ class Buku extends BaseController
             $dompdf->setPaper('A4', 'potrait');
             $dompdf->render();
             $dompdf->stream($fileName);
+            exit();
         } else {
             $spreadsheet = new Spreadsheet();
             $data = $this->m_buku->data_buku_convert();
